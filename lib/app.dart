@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/theme/app_theme.dart';
 import 'package:landlord_os/core/theme/dark_theme.dart';
+import 'package:landlord_os/features/auth/presentation/login_screen.dart';
+import 'package:landlord_os/features/auth/presentation/signup_screen.dart';
 import 'package:landlord_os/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:landlord_os/features/properties/presentation/properties_screen.dart';
+import 'package:landlord_os/features/properties/presentation/property_detail_screen.dart';
+import 'package:landlord_os/features/properties/presentation/add_property_screen.dart';
 import 'package:landlord_os/features/tenants/presentation/tenants_screen.dart';
+import 'package:landlord_os/features/tenants/presentation/tenant_detail_screen.dart';
+import 'package:landlord_os/features/tenants/presentation/add_tenant_screen.dart';
 import 'package:landlord_os/features/financials/presentation/financials_screen.dart';
 import 'package:landlord_os/features/ai/presentation/ai_assistant_screen.dart';
 
@@ -57,13 +64,43 @@ class _AppShell extends StatelessWidget {
   }
 }
 
+/// Returns `true` if there is a logged-in Supabase user.
+bool _isAuthenticated() {
+  try {
+    return Supabase.instance.client.auth.currentUser != null;
+  } catch (_) {
+    return false;
+  }
+}
+
 final _router = GoRouter(
   initialLocation: '/dashboard',
+  redirect: (context, state) {
+    final loggedIn = _isAuthenticated();
+    final isAuthRoute =
+        state.matchedLocation == '/login' || state.matchedLocation == '/signup';
+
+    if (!loggedIn && !isAuthRoute) return '/login';
+    if (loggedIn && isAuthRoute) return '/dashboard';
+    return null;
+  },
   routes: [
+    // Auth routes (no bottom nav)
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => const SignupScreen(),
+    ),
+
+    // Main app shell with bottom nav
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           _AppShell(navigationShell: navigationShell),
       branches: [
+        // Dashboard
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -72,22 +109,52 @@ final _router = GoRouter(
             ),
           ],
         ),
+
+        // Properties
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/properties',
               builder: (context, state) => const PropertiesScreen(),
+              routes: [
+                GoRoute(
+                  path: 'add',
+                  builder: (context, state) => const AddPropertyScreen(),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (context, state) => PropertyDetailScreen(
+                    propertyId: state.pathParameters['id']!,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+
+        // Tenants
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: '/tenants',
               builder: (context, state) => const TenantsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'add',
+                  builder: (context, state) => const AddTenantScreen(),
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (context, state) => TenantDetailScreen(
+                    tenantId: state.pathParameters['id']!,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+
+        // Financials
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -96,6 +163,8 @@ final _router = GoRouter(
             ),
           ],
         ),
+
+        // AI
         StatefulShellBranch(
           routes: [
             GoRoute(

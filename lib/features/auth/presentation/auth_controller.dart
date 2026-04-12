@@ -1,0 +1,64 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:landlord_os/features/auth/data/auth_repository.dart';
+import 'package:landlord_os/features/auth/domain/user_model.dart';
+
+part 'auth_controller.g.dart';
+
+/// Manages authentication state for the entire app.
+@riverpod
+class AuthController extends _$AuthController {
+  @override
+  AsyncValue<UserModel?> build() {
+    final repo = ref.watch(authRepositoryProvider);
+
+    // Listen to auth state changes and update.
+    repo.authStateChanges.listen((event) {
+      if (event.event == AuthChangeEvent.signedIn ||
+          event.event == AuthChangeEvent.tokenRefreshed) {
+        state = AsyncData(repo.currentUser);
+      } else if (event.event == AuthChangeEvent.signedOut) {
+        state = const AsyncData(null);
+      }
+    });
+
+    return AsyncData(repo.currentUser);
+  }
+
+  /// Signs in with email and password.
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref.read(authRepositoryProvider).signIn(
+            email: email,
+            password: password,
+          ),
+    );
+  }
+
+  /// Creates a new account.
+  Future<void> signUp({
+    required String email,
+    required String password,
+    String? fullName,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref.read(authRepositoryProvider).signUp(
+            email: email,
+            password: password,
+            fullName: fullName,
+          ),
+    );
+  }
+
+  /// Signs the user out.
+  Future<void> signOut() async {
+    await ref.read(authRepositoryProvider).signOut();
+    state = const AsyncData(null);
+  }
+}
