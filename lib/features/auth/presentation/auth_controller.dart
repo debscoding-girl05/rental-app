@@ -56,6 +56,28 @@ class AuthController extends _$AuthController {
     );
   }
 
+  /// Signs in with Google OAuth.
+  Future<void> signInWithGoogle() async {
+    state = const AsyncLoading();
+    try {
+      final success =
+          await ref.read(authRepositoryProvider).signInWithGoogle();
+      // OAuth opens a browser — if it didn't launch or returns false,
+      // reset to idle so buttons become tappable again.
+      if (!success) {
+        state = const AsyncData(null);
+      }
+      // On success the auth state listener handles the rest.
+      // Reset to idle regardless so the UI isn't stuck loading
+      // while waiting for the browser redirect.
+      state = const AsyncData(null);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+      // Immediately reset so buttons recover after the error snackbar fires.
+      state = const AsyncData(null);
+    }
+  }
+
   /// Signs the user out.
   Future<void> signOut() async {
     await ref.read(authRepositoryProvider).signOut();

@@ -11,11 +11,16 @@ import 'package:landlord_os/features/dashboard/presentation/dashboard_screen.dar
 import 'package:landlord_os/features/properties/presentation/properties_screen.dart';
 import 'package:landlord_os/features/properties/presentation/property_detail_screen.dart';
 import 'package:landlord_os/features/properties/presentation/add_property_screen.dart';
+import 'package:landlord_os/features/properties/presentation/add_unit_screen.dart';
 import 'package:landlord_os/features/tenants/presentation/tenants_screen.dart';
 import 'package:landlord_os/features/tenants/presentation/tenant_detail_screen.dart';
 import 'package:landlord_os/features/tenants/presentation/add_tenant_screen.dart';
 import 'package:landlord_os/features/financials/presentation/financials_screen.dart';
+import 'package:landlord_os/features/financials/presentation/add_transaction_screen.dart';
+import 'package:landlord_os/features/auth/presentation/forgot_password_screen.dart';
 import 'package:landlord_os/features/ai/presentation/ai_assistant_screen.dart';
+import 'package:landlord_os/features/ai/presentation/price_predictor_screen.dart';
+import 'package:landlord_os/features/ai/presentation/profitability_screen.dart';
 
 /// Root widget for LandlordOS.
 class LandlordOSApp extends ConsumerWidget {
@@ -94,6 +99,10 @@ final _router = GoRouter(
       path: '/signup',
       builder: (context, state) => const SignupScreen(),
     ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
 
     // Main app shell with bottom nav
     StatefulShellRoute.indexedStack(
@@ -126,6 +135,14 @@ final _router = GoRouter(
                   builder: (context, state) => PropertyDetailScreen(
                     propertyId: state.pathParameters['id']!,
                   ),
+                  routes: [
+                    GoRoute(
+                      path: 'units/add',
+                      builder: (context, state) => AddUnitScreen(
+                        propertyId: state.pathParameters['id']!,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -160,6 +177,12 @@ final _router = GoRouter(
             GoRoute(
               path: '/financials',
               builder: (context, state) => const FinancialsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'add',
+                  builder: (context, state) => const AddTransactionScreen(),
+                ),
+              ],
             ),
           ],
         ),
@@ -170,6 +193,16 @@ final _router = GoRouter(
             GoRoute(
               path: '/ai/assistant',
               builder: (context, state) => const AiAssistantScreen(),
+              routes: [
+                GoRoute(
+                  path: 'price-predictor',
+                  builder: (context, state) => const PricePredictorScreen(),
+                ),
+                GoRoute(
+                  path: 'profitability',
+                  builder: (context, state) => const ProfitabilityScreen(),
+                ),
+              ],
             ),
           ],
         ),

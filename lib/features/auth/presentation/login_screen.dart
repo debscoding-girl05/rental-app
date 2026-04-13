@@ -100,11 +100,46 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     obscureText: true,
                     prefixIcon: Icons.lock_outlined,
                   ),
-                  const SizedBox(height: 24),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => context.push('/forgot-password'),
+                      child: const Text('Forgot password?'),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   AppButton(
                     label: 'Sign In',
                     onPressed: _submit,
                     isLoading: authState.isLoading,
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'OR',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed: authState.isLoading
+                        ? null
+                        : () => ref.read(authControllerProvider.notifier).signInWithGoogle(),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 52),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                    label: const Text('Continue with Google'),
                   ),
                   const SizedBox(height: 16),
                   TextButton(

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/app.dart';
 import 'package:landlord_os/core/constants/supabase_keys.dart';
+import 'package:landlord_os/core/services/notification_service.dart';
 import 'package:landlord_os/core/utils/logger.dart';
 
 void main() async {
@@ -22,6 +23,9 @@ void main() async {
       'Supabase credentials not set — running without backend.',
     );
   }
+
+  await NotificationService.instance.init();
+  await NotificationService.instance.requestPermission();
 
   runApp(const ProviderScope(child: LandlordOSApp()));
 }

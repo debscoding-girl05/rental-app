@@ -76,6 +76,28 @@ class AuthRepository {
     }
   }
 
+  /// Sends a password reset email.
+  Future<void> resetPassword({required String email}) async {
+    try {
+      await _client.auth.resetPasswordForEmail(email);
+    } on AuthApiException catch (e) {
+      throw app.AuthException(e.message);
+    }
+  }
+
+  /// Signs in with Google OAuth via Supabase.
+  Future<bool> signInWithGoogle() async {
+    try {
+      final result = await _client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: 'io.supabase.landlordos://login-callback/',
+      );
+      return result;
+    } on AuthApiException catch (e) {
+      throw app.AuthException(e.message);
+    }
+  }
+
   /// Signs the user out.
   Future<void> signOut() async {
     await _client.auth.signOut();

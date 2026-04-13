@@ -15,6 +15,7 @@ class TenantsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tenantsAsync = ref.watch(tenantControllerProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tenants')),
@@ -31,7 +32,8 @@ class TenantsScreen extends ConsumerWidget {
         data: (tenants) {
           if (tenants.isEmpty) {
             return EmptyStateWidget(
-              message: 'No tenants yet.\nAdd your first tenant to get started.',
+              message:
+                  'No tenants yet.\nAdd your first tenant to get started.',
               icon: Icons.people_outline,
               actionLabel: 'Add Tenant',
               onAction: () => context.push('/tenants/add'),
@@ -48,10 +50,14 @@ class TenantsScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      backgroundColor:
+                          theme.colorScheme.primary.withValues(alpha: 0.1),
                       child: Text(
-                        tenant.fullName.isNotEmpty ? tenant.fullName[0].toUpperCase() : '?',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                        tenant.fullName.isNotEmpty
+                            ? tenant.fullName[0].toUpperCase()
+                            : '?',
+                        style:
+                            TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -59,22 +65,25 @@ class TenantsScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(tenant.fullName, style: Theme.of(context).textTheme.titleMedium),
-                          if (tenant.email != null)
+                          Text(tenant.fullName,
+                              style: theme.textTheme.titleMedium),
+                          if (tenant.phone != null &&
+                              tenant.phone!.isNotEmpty)
                             Text(
-                              tenant.email!,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                                  ),
+                              tenant.phone!,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.6),
+                              ),
                             ),
                         ],
                       ),
                     ),
                     Text(
                       tenant.rentAmount.toCurrency(),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.secondary,
+                      ),
                     ),
                   ],
                 ),

@@ -30,14 +30,14 @@ class TenantRepository {
     }
   }
 
-  /// Fetches tenants for a specific property.
-  Future<List<Tenant>> getByProperty(String propertyId) async {
+  /// Fetches tenants for a specific unit.
+  Future<List<Tenant>> getByUnit(String unitId) async {
     try {
       final rows = await _client
           .from('tenants')
           .select()
           .eq('landlord_id', _userId)
-          .eq('property_id', propertyId)
+          .eq('unit_id', unitId)
           .order('created_at', ascending: false);
       return rows.map(TenantDto.fromRow).toList();
     } catch (e) {
@@ -56,7 +56,7 @@ class TenantRepository {
     }
   }
 
-  /// Inserts a new tenant and returns it with the generated ID.
+  /// Inserts a new tenant.
   Future<Tenant> add(Tenant tenant) async {
     try {
       final row = await _client

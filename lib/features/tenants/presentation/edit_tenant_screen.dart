@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/properties/data/unit_repository.dart';
@@ -12,26 +10,30 @@ import 'package:landlord_os/features/tenants/presentation/tenant_controller.dart
 import 'package:landlord_os/shared/widgets/app_button.dart';
 import 'package:landlord_os/shared/widgets/app_text_field.dart';
 
-/// Form to add a new tenant.
-class AddTenantScreen extends ConsumerStatefulWidget {
-  const AddTenantScreen({super.key});
+/// Form to edit an existing tenant.
+class EditTenantScreen extends ConsumerStatefulWidget {
+  const EditTenantScreen({required this.tenant, super.key});
+
+  final Tenant tenant;
 
   @override
-  ConsumerState<AddTenantScreen> createState() => _AddTenantScreenState();
+  ConsumerState<EditTenantScreen> createState() => _EditTenantScreenState();
 }
 
-class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
+class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameCtrl = TextEditingController();
-  final _emailCtrl = TextEditingController();
-  final _phoneCtrl = TextEditingController();
-  final _idNumberCtrl = TextEditingController();
-  final _rentCtrl = TextEditingController();
-  final _depositCtrl = TextEditingController();
-  final _notesCtrl = TextEditingController();
+  late final TextEditingController _nameCtrl;
+  late final TextEditingController _emailCtrl;
+  late final TextEditingController _phoneCtrl;
+  late final TextEditingController _idNumberCtrl;
+  late final TextEditingController _rentCtrl;
+  late final TextEditingController _depositCtrl;
+  late final TextEditingController _notesCtrl;
 
-  String? _selectedUnitId;
-  String _paymentFrequency = PaymentFrequencies.all.first;
+  late String? _selectedUnitId;
+  late String _paymentFrequency;
+  DateTime? _leaseStart;
+  DateTime? _leaseEnd;
   bool _isSubmitting = false;
   List<Unit>? _units;
   bool _unitsLoading = true;
@@ -40,6 +42,19 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
   @override
   void initState() {
     super.initState();
+    final t = widget.tenant;
+    _nameCtrl = TextEditingController(text: t.fullName);
+    _emailCtrl = TextEditingController(text: t.email ?? '');
+    _phoneCtrl = TextEditingController(text: t.phone ?? '');
+    _idNumberCtrl = TextEditingController(text: t.idNumber ?? '');
+    _rentCtrl = TextEditingController(text: t.rentAmount.toStringAsFixed(0));
+    _depositCtrl = TextEditingController(
+        text: t.depositAmount?.toStringAsFixed(0) ?? '');
+    _notesCtrl = TextEditingController(text: t.notes ?? '');
+    _selectedUnitId = t.unitId;
+    _paymentFrequency = t.paymentFrequency;
+    _leaseStart = t.leaseStart;
+    _leaseEnd = t.leaseEnd;
     _loadUnits();
   }
 
@@ -74,31 +89,52 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
     super.dispose();
   }
 
+  Future<void> _pickDate({required bool isStart}) async {
+    final initial = isStart ? _leaseStart : _leaseEnd;
+    final date = await showDatePicker(
+      context: context,
+      initialDate: initial ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2050),
+    );
+    if (date != null) {
+      setState(() {
+        if (isStart) {
+          _leaseStart = date;
+        } else {
+          _leaseEnd = date;
+        }
+      });
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSubmitting = true);
 
-    final tenant = Tenant(
-      id: '',
-      landlordId: Supabase.instance.client.auth.currentUser!.id,
-      unitId: _selectedUnitId,
+    final tenant = widget.tenant.copyWith(
       fullName: _nameCtrl.text.trim(),
-      email: _emailCtrl.text.trim().isNotEmpty ? _emailCtrl.text.trim() : null,
-      phone: _phoneCtrl.text.trim().isNotEmpty ? _phoneCtrl.text.trim() : null,
+      email:
+          _emailCtrl.text.trim().isNotEmpty ? _emailCtrl.text.trim() : null,
+      phone:
+          _phoneCtrl.text.trim().isNotEmpty ? _phoneCtrl.text.trim() : null,
       idNumber: _idNumberCtrl.text.trim().isNotEmpty
           ? _idNumberCtrl.text.trim()
           : null,
+      unitId: _selectedUnitId,
       rentAmount: double.parse(_rentCtrl.text.trim()),
       depositAmount: double.tryParse(_depositCtrl.text.trim()),
       paymentFrequency: _paymentFrequency,
+      leaseStart: _leaseStart,
+      leaseEnd: _leaseEnd,
       notes:
           _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
     );
 
     try {
-      await ref.read(tenantControllerProvider.notifier).addTenant(tenant);
-      if (mounted) context.pop();
+      await ref.read(tenantControllerProvider.notifier).updateTenant(tenant);
+      if (mounted) context.pop(true);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -111,10 +147,15 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
     }
   }
 
+  String _formatDate(DateTime? d) =>
+      d == null ? 'Not set' : '${d.day}/${d.month}/${d.year}';
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Tenant')),
+      appBar: AppBar(title: const Text('Edit Tenant')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -136,7 +177,7 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
                 validator: Validators.phone,
                 keyboardType: TextInputType.phone,
                 prefixIcon: Icons.phone_outlined,
-                hint: 'e.g. +225 07 00 00 00',
+                hint: 'e.g. +237 6 70 00 00 00',
               ),
               const SizedBox(height: 16),
 
@@ -160,8 +201,7 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
                 const LinearProgressIndicator()
               else if (_unitsError != null)
                 Text('Could not load units',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.error))
+                    style: TextStyle(color: theme.colorScheme.error))
               else
                 DropdownButtonFormField<String>(
                   initialValue: _selectedUnitId,
@@ -224,6 +264,38 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
               ),
               const SizedBox(height: 16),
 
+              // Lease dates
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _pickDate(isStart: true),
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Lease Start',
+                          prefixIcon: Icon(Icons.calendar_today_outlined),
+                        ),
+                        child: Text(_formatDate(_leaseStart)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _pickDate(isStart: false),
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Lease End',
+                          prefixIcon: Icon(Icons.calendar_today_outlined),
+                        ),
+                        child: Text(_formatDate(_leaseEnd)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               AppTextField(
                 label: 'Notes',
                 controller: _notesCtrl,
@@ -232,7 +304,7 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
               const SizedBox(height: 24),
 
               AppButton(
-                label: 'Add Tenant',
+                label: 'Save Changes',
                 onPressed: _submit,
                 isLoading: _isSubmitting,
               ),
