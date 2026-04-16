@@ -59,7 +59,10 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('AI error: $e'), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text('AI error: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -82,32 +85,36 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
               child: Column(
                 children: [
                   AppTextField(
-                      label: 'Purchase Price',
-                      controller: _purchasePriceCtrl,
-                      validator: Validators.positiveNumber,
-                      keyboardType: TextInputType.number,
-                      prefixIcon: Icons.home),
+                    label: 'Purchase Price',
+                    controller: _purchasePriceCtrl,
+                    validator: Validators.positiveNumber,
+                    keyboardType: TextInputType.number,
+                    prefixIcon: Icons.home,
+                  ),
                   const SizedBox(height: 16),
                   AppTextField(
-                      label: 'Monthly Mortgage',
-                      controller: _mortgageCtrl,
-                      validator: Validators.positiveNumber,
-                      keyboardType: TextInputType.number,
-                      prefixIcon: Icons.account_balance),
+                    label: 'Monthly Mortgage',
+                    controller: _mortgageCtrl,
+                    validator: Validators.positiveNumber,
+                    keyboardType: TextInputType.number,
+                    prefixIcon: Icons.account_balance,
+                  ),
                   const SizedBox(height: 16),
                   AppTextField(
-                      label: 'Monthly Rent Income',
-                      controller: _rentCtrl,
-                      validator: Validators.positiveNumber,
-                      keyboardType: TextInputType.number,
-                      prefixIcon: Icons.attach_money),
+                    label: 'Monthly Rent Income',
+                    controller: _rentCtrl,
+                    validator: Validators.positiveNumber,
+                    keyboardType: TextInputType.number,
+                    prefixIcon: Icons.attach_money,
+                  ),
                   const SizedBox(height: 16),
                   AppTextField(
-                      label: 'Monthly Expenses (maintenance, insurance, tax)',
-                      controller: _expensesCtrl,
-                      validator: Validators.positiveNumber,
-                      keyboardType: TextInputType.number,
-                      prefixIcon: Icons.money_off),
+                    label: 'Monthly Expenses (maintenance, insurance, tax)',
+                    controller: _expensesCtrl,
+                    validator: Validators.positiveNumber,
+                    keyboardType: TextInputType.number,
+                    prefixIcon: Icons.money_off,
+                  ),
                   const SizedBox(height: 24),
                   AppButton(
                     label: context.l10n.analyze,
@@ -126,21 +133,41 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Analysis Results', style: theme.textTheme.titleMedium),
+                      Text(
+                        'Analysis Results',
+                        style: theme.textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 16),
-                      _MetricRow(label: 'Gross Yield', value: _result!.grossYield.toPercentage()),
-                      _MetricRow(label: 'Net Yield', value: _result!.netYield.toPercentage()),
+                      _MetricRow(
+                        label: 'Gross Yield',
+                        value: _result!.grossYield.toPercentage(),
+                      ),
+                      _MetricRow(
+                        label: 'Net Yield',
+                        value: _result!.netYield.toPercentage(),
+                      ),
                       _MetricRow(
                         label: 'Monthly Cash Flow',
                         value: _result!.monthlyCashFlow.toCurrency(),
-                        valueColor: _result!.monthlyCashFlow >= 0 ? AppColors.success : AppColors.error,
+                        valueColor: _result!.monthlyCashFlow >= 0
+                            ? AppColors.success
+                            : AppColors.error,
                       ),
-                      _MetricRow(label: 'Annual ROI', value: _result!.annualRoi.toPercentage()),
-                      _MetricRow(label: 'Break-even', value: _result!.breakEvenTimeline),
+                      _MetricRow(
+                        label: 'Annual ROI',
+                        value: _result!.annualRoi.toPercentage(),
+                      ),
+                      _MetricRow(
+                        label: 'Break-even',
+                        value: _result!.breakEvenTimeline,
+                      ),
                       const SizedBox(height: 16),
                       const Divider(),
                       const SizedBox(height: 12),
-                      Text(context.l10n.recommendation, style: theme.textTheme.titleSmall),
+                      Text(
+                        context.l10n.recommendation,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 4),
                       Text(_result!.verdict, style: theme.textTheme.bodyMedium),
                     ],
@@ -169,13 +196,21 @@ class _MetricRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-              )),
-          Text(value, style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: valueColor,
-                fontWeight: FontWeight.w600,
-              )),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: valueColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

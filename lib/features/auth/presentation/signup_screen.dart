@@ -33,7 +33,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authControllerProvider.notifier).signUp(
+    await ref
+        .read(authControllerProvider.notifier)
+        .signUp(
           email: _emailCtrl.text.trim(),
           password: _passwordCtrl.text,
           fullName: _nameCtrl.text.trim().isNotEmpty
@@ -84,11 +86,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   Text(
                     context.l10n.createYourAccount,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                   const SizedBox(height: 40),
                   AppTextField(
@@ -128,7 +129,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => context.go('/login'),
-                    child: Text('${context.l10n.alreadyHaveAccount} ${context.l10n.signIn}'),
+                    child: Text(
+                      '${context.l10n.alreadyHaveAccount} ${context.l10n.signIn}',
+                    ),
                   ),
                 ],
               ),

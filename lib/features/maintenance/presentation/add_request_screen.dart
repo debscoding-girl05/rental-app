@@ -58,8 +58,9 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
   Future<void> _loadUnitsForProperty(String propertyId) async {
     setState(() => _unitsLoading = true);
     try {
-      final units =
-          await ref.read(unitRepositoryProvider).getByProperty(propertyId);
+      final units = await ref
+          .read(unitRepositoryProvider)
+          .getByProperty(propertyId);
       if (mounted) {
         setState(() {
           _units = units;
@@ -96,8 +97,9 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
       propertyId: _selectedPropertyId!,
       unitId: _selectedUnitId,
       title: _titleCtrl.text.trim(),
-      description:
-          _descCtrl.text.trim().isNotEmpty ? _descCtrl.text.trim() : null,
+      description: _descCtrl.text.trim().isNotEmpty
+          ? _descCtrl.text.trim()
+          : null,
       priority: _priority,
     );
 
@@ -110,7 +112,9 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -157,10 +161,12 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
                   prefixIcon: const Icon(Icons.flag_outlined),
                 ),
                 items: MaintenancePriorities.all
-                    .map((p) => DropdownMenuItem(
-                          value: p,
-                          child: Text(MaintenancePriorities.label(p)),
-                        ))
+                    .map(
+                      (p) => DropdownMenuItem(
+                        value: p,
+                        child: Text(MaintenancePriorities.label(p)),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) {
                   if (v != null) setState(() => _priority = v);
@@ -173,21 +179,19 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
                 loading: () => const LinearProgressIndicator(),
                 error: (_, __) => Text(
                   'Could not load properties',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.error),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
-                data: (properties) =>
-                    DropdownButtonFormField<String>(
+                data: (properties) => DropdownButtonFormField<String>(
                   initialValue: _selectedPropertyId,
                   decoration: const InputDecoration(
                     labelText: 'Property',
                     prefixIcon: Icon(Icons.home_work_outlined),
                   ),
                   items: properties
-                      .map((p) => DropdownMenuItem(
-                            value: p.id,
-                            child: Text(p.name),
-                          ))
+                      .map(
+                        (p) =>
+                            DropdownMenuItem(value: p.id, child: Text(p.name)),
+                      )
                       .toList(),
                   onChanged: (v) {
                     setState(() {
@@ -215,11 +219,15 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
                   ),
                   items: [
                     const DropdownMenuItem<String>(
-                        value: null, child: Text('None')),
-                    ..._units.map((u) => DropdownMenuItem(
-                          value: u.id,
-                          child: Text(u.unitLabel),
-                        )),
+                      value: null,
+                      child: Text('None'),
+                    ),
+                    ..._units.map(
+                      (u) => DropdownMenuItem(
+                        value: u.id,
+                        child: Text(u.unitLabel),
+                      ),
+                    ),
                   ],
                   onChanged: (v) => setState(() => _selectedUnitId = v),
                 ),

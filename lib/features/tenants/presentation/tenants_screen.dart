@@ -51,14 +51,14 @@ class TenantsScreen extends ConsumerWidget {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundColor:
-                          theme.colorScheme.primary.withValues(alpha: 0.1),
+                      backgroundColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.1,
+                      ),
                       child: Text(
                         tenant.fullName.isNotEmpty
                             ? tenant.fullName[0].toUpperCase()
                             : '?',
-                        style:
-                            TextStyle(color: theme.colorScheme.primary),
+                        style: TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -66,15 +66,17 @@ class TenantsScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(tenant.fullName,
-                              style: theme.textTheme.titleMedium),
-                          if (tenant.phone != null &&
-                              tenant.phone!.isNotEmpty)
+                          Text(
+                            tenant.fullName,
+                            style: theme.textTheme.titleMedium,
+                          ),
+                          if (tenant.phone != null && tenant.phone!.isNotEmpty)
                             Text(
                               tenant.phone!,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.6),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
                               ),
                             ),
                         ],

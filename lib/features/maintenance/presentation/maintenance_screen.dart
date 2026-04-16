@@ -59,19 +59,15 @@ class _MaintenanceScreenState extends ConsumerState<MaintenanceScreen> {
           // --- Request list ---
           Expanded(
             child: requestsAsync.when(
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => AppErrorWidget(
                 message: error.toString(),
-                onRetry: () =>
-                    ref.invalidate(maintenanceControllerProvider),
+                onRetry: () => ref.invalidate(maintenanceControllerProvider),
               ),
               data: (requests) {
                 final filtered = _statusFilter == 'all'
                     ? requests
-                    : requests
-                        .where((r) => r.status == _statusFilter)
-                        .toList();
+                    : requests.where((r) => r.status == _statusFilter).toList();
 
                 if (filtered.isEmpty) {
                   return EmptyStateWidget(
@@ -98,8 +94,7 @@ class _MaintenanceScreenState extends ConsumerState<MaintenanceScreen> {
     );
   }
 
-  Widget _buildFilterChip(
-      String value, String label, ThemeData theme) {
+  Widget _buildFilterChip(String value, String label, ThemeData theme) {
     final selected = _statusFilter == value;
     return FilterChip(
       label: Text(label),
@@ -117,18 +112,18 @@ class _RequestCard extends StatelessWidget {
   final MaintenanceRequest request;
 
   Color _priorityColor(String priority) => switch (priority) {
-        'urgent' => AppColors.error,
-        'high' => AppColors.warning,
-        'medium' => AppColors.info,
-        _ => AppColors.disabled,
-      };
+    'urgent' => AppColors.error,
+    'high' => AppColors.warning,
+    'medium' => AppColors.info,
+    _ => AppColors.disabled,
+  };
 
   Color _statusColor(String status, ThemeData theme) => switch (status) {
-        'open' => AppColors.error,
-        'in_progress' => AppColors.warning,
-        'resolved' => AppColors.success,
-        _ => theme.colorScheme.onSurface,
-      };
+    'open' => AppColors.error,
+    'in_progress' => AppColors.warning,
+    'resolved' => AppColors.success,
+    _ => theme.colorScheme.onSurface,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -158,10 +153,13 @@ class _RequestCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: _priorityColor(request.priority)
-                          .withValues(alpha: 0.15),
+                      color: _priorityColor(
+                        request.priority,
+                      ).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -181,10 +179,14 @@ class _RequestCard extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: _statusColor(request.status, theme)
-                          .withValues(alpha: 0.15),
+                      color: _statusColor(
+                        request.status,
+                        theme,
+                      ).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -200,8 +202,9 @@ class _RequestCard extends StatelessWidget {
                     Text(
                       request.createdAt!.formatted,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface
-                            .withValues(alpha: 0.5),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                     ),
                 ],

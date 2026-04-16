@@ -54,7 +54,10 @@ class FinancialsScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Income vs Expenses pie chart
-              Text('Income vs Expenses', style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Income vs Expenses',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 12),
               SizedBox(
                 height: 200,
@@ -64,7 +67,10 @@ class FinancialsScreen extends ConsumerWidget {
 
               // Expense breakdown bar chart
               if (summary.expensesByCategory.isNotEmpty) ...[
-                Text('Expense Breakdown', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Expense Breakdown',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 SizedBox(
                   height: 200,
@@ -74,29 +80,47 @@ class FinancialsScreen extends ConsumerWidget {
               ],
 
               // Recent transactions list
-              Text('Recent Transactions', style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Recent Transactions',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 12),
-              ...transactions.take(10).map((tx) => ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: tx.type == 'income'
-                          ? AppColors.success.withValues(alpha: 0.1)
-                          : AppColors.error.withValues(alpha: 0.1),
-                      child: Icon(
-                        tx.type == 'income' ? Icons.arrow_downward : Icons.arrow_upward,
-                        color: tx.type == 'income' ? AppColors.success : AppColors.error,
-                        size: 20,
+              ...transactions
+                  .take(10)
+                  .map(
+                    (tx) => ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: tx.type == 'income'
+                            ? AppColors.success.withValues(alpha: 0.1)
+                            : AppColors.error.withValues(alpha: 0.1),
+                        child: Icon(
+                          tx.type == 'income'
+                              ? Icons.arrow_downward
+                              : Icons.arrow_upward,
+                          color: tx.type == 'income'
+                              ? AppColors.success
+                              : AppColors.error,
+                          size: 20,
+                        ),
+                      ),
+                      title: Text(
+                        tx.category.replaceAll('_', ' ').toUpperCase(),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      subtitle: tx.description != null
+                          ? Text(tx.description!)
+                          : null,
+                      trailing: Text(
+                        '${tx.type == 'income' ? '+' : '-'}${tx.amount.toCurrency()}',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: tx.type == 'income'
+                                  ? AppColors.success
+                                  : AppColors.error,
+                            ),
                       ),
                     ),
-                    title: Text(tx.category.replaceAll('_', ' ').toUpperCase(),
-                        style: Theme.of(context).textTheme.bodyMedium),
-                    subtitle: tx.description != null ? Text(tx.description!) : null,
-                    trailing: Text(
-                      '${tx.type == 'income' ? '+' : '-'}${tx.amount.toCurrency()}',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: tx.type == 'income' ? AppColors.success : AppColors.error,
-                          ),
-                    ),
-                  )),
+                  ),
             ],
           );
         },
@@ -143,7 +167,9 @@ class _SummaryCards extends StatelessWidget {
                 label: context.l10n.netProfit,
                 value: summary.netProfit.toCurrency(),
                 icon: Icons.account_balance,
-                iconColor: summary.netProfit >= 0 ? AppColors.success : AppColors.error,
+                iconColor: summary.netProfit >= 0
+                    ? AppColors.success
+                    : AppColors.error,
               ),
             ),
             const SizedBox(width: 12),
@@ -179,14 +205,22 @@ class _IncomeExpensePieChart extends StatelessWidget {
             title: context.l10n.income,
             color: AppColors.success,
             radius: 50,
-            titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+            titleStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
           PieChartSectionData(
             value: summary.totalExpenses,
             title: context.l10n.expense,
             color: AppColors.error,
             radius: 50,
-            titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+            titleStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -224,7 +258,8 @@ class _ExpenseBarChart extends StatelessWidget {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 final idx = value.toInt();
-                if (idx < 0 || idx >= entries.length) return const SizedBox.shrink();
+                if (idx < 0 || idx >= entries.length)
+                  return const SizedBox.shrink();
                 return Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
@@ -237,9 +272,15 @@ class _ExpenseBarChart extends StatelessWidget {
               },
             ),
           ),
-          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(show: false),
         gridData: const FlGridData(show: false),

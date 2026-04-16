@@ -37,8 +37,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
     _scrollToBottom();
 
     try {
-      final response =
-          await ref.read(aiControllerProvider.notifier).askAssistant(text);
+      final response = await ref
+          .read(aiControllerProvider.notifier)
+          .askAssistant(text);
       if (mounted) {
         setState(() {
           _messages.add(_ChatMessage(text: response, isUser: false));
@@ -83,14 +84,21 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.auto_awesome,
-                              size: 48, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
+                          Icon(
+                            Icons.auto_awesome,
+                            size: 48,
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
                           const SizedBox(height: 16),
                           Text(
                             context.l10n.askAI,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                           ),
                         ],
@@ -122,8 +130,13 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                       controller: _messageCtrl,
                       decoration: InputDecoration(
                         hintText: context.l10n.askAI,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                       ),
                       onSubmitted: (_) => _send(),
                       textInputAction: TextInputAction.send,
@@ -160,7 +173,9 @@ class _ChatBubble extends StatelessWidget {
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.75,
+        ),
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(

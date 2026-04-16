@@ -51,22 +51,26 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
     });
 
     try {
-      final prediction =
-          await ref.read(aiControllerProvider.notifier).predictPrice(
-                city: _cityCtrl.text.trim(),
-                country: _countryCtrl.text.trim(),
-                bedrooms: int.tryParse(_bedroomsCtrl.text.trim()),
-                bathrooms: int.tryParse(_bathroomsCtrl.text.trim()),
-                sizeSqm: double.tryParse(_sizeCtrl.text.trim()),
-                notes: _notesCtrl.text.trim().isNotEmpty
-                    ? _notesCtrl.text.trim()
-                    : null,
-              );
+      final prediction = await ref
+          .read(aiControllerProvider.notifier)
+          .predictPrice(
+            city: _cityCtrl.text.trim(),
+            country: _countryCtrl.text.trim(),
+            bedrooms: int.tryParse(_bedroomsCtrl.text.trim()),
+            bathrooms: int.tryParse(_bathroomsCtrl.text.trim()),
+            sizeSqm: double.tryParse(_sizeCtrl.text.trim()),
+            notes: _notesCtrl.text.trim().isNotEmpty
+                ? _notesCtrl.text.trim()
+                : null,
+          );
       if (mounted) setState(() => _result = prediction);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('AI error: $e'), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text('AI error: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -91,44 +95,54 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                   Row(
                     children: [
                       Expanded(
-                          child: AppTextField(
-                              label: 'City',
-                              controller: _cityCtrl,
-                              validator: Validators.required)),
+                        child: AppTextField(
+                          label: 'City',
+                          controller: _cityCtrl,
+                          validator: Validators.required,
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
-                          child: AppTextField(
-                              label: 'Country',
-                              controller: _countryCtrl,
-                              validator: Validators.required)),
+                        child: AppTextField(
+                          label: 'Country',
+                          controller: _countryCtrl,
+                          validator: Validators.required,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
-                          child: AppTextField(
-                              label: 'Bedrooms',
-                              controller: _bedroomsCtrl,
-                              keyboardType: TextInputType.number)),
+                        child: AppTextField(
+                          label: 'Bedrooms',
+                          controller: _bedroomsCtrl,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
-                          child: AppTextField(
-                              label: 'Bathrooms',
-                              controller: _bathroomsCtrl,
-                              keyboardType: TextInputType.number)),
+                        child: AppTextField(
+                          label: 'Bathrooms',
+                          controller: _bathroomsCtrl,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                      label: 'Size (sqm)',
-                      controller: _sizeCtrl,
-                      keyboardType: TextInputType.number),
+                    label: 'Size (sqm)',
+                    controller: _sizeCtrl,
+                    keyboardType: TextInputType.number,
+                  ),
                   const SizedBox(height: 16),
                   AppTextField(
-                      label: context.l10n.notes,
-                      controller: _notesCtrl,
-                      maxLines: 2),
+                    label: context.l10n.notes,
+                    controller: _notesCtrl,
+                    maxLines: 2,
+                  ),
                   const SizedBox(height: 24),
                   AppButton(
                     label: context.l10n.predict,
@@ -147,40 +161,54 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(context.l10n.estimatedPrice,
-                          style: theme.textTheme.titleMedium),
+                      Text(
+                        context.l10n.estimatedPrice,
+                        style: theme.textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(_result!.suggestedMin.toCurrency(),
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: theme.colorScheme.secondary,
-                                  fontWeight: FontWeight.w700)),
+                          Text(
+                            _result!.suggestedMin.toCurrency(),
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           Text('  —  ', style: theme.textTheme.headlineMedium),
-                          Text(_result!.suggestedMax.toCurrency(),
-                              style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: theme.colorScheme.secondary,
-                                  fontWeight: FontWeight.w700)),
+                          Text(
+                            _result!.suggestedMax.toCurrency(),
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Center(
                         child: Chip(
                           label: Text(
-                              'Confidence: ${_result!.confidenceLevel.toUpperCase()}'),
+                            'Confidence: ${_result!.confidenceLevel.toUpperCase()}',
+                          ),
                           backgroundColor: _result!.confidenceLevel == 'high'
                               ? AppColors.success.withValues(alpha: 0.1)
                               : _result!.confidenceLevel == 'medium'
-                                  ? AppColors.warning.withValues(alpha: 0.1)
-                                  : AppColors.error.withValues(alpha: 0.1),
+                              ? AppColors.warning.withValues(alpha: 0.1)
+                              : AppColors.error.withValues(alpha: 0.1),
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Text(context.l10n.recommendation, style: theme.textTheme.titleSmall),
+                      Text(
+                        context.l10n.recommendation,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 4),
-                      Text(_result!.reasoning,
-                          style: theme.textTheme.bodyMedium),
+                      Text(
+                        _result!.reasoning,
+                        style: theme.textTheme.bodyMedium,
+                      ),
                     ],
                   ),
                 ),

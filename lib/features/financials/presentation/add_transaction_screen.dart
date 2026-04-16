@@ -67,8 +67,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     });
 
     try {
-      final units =
-          await ref.read(unitRepositoryProvider).getByProperty(propertyId);
+      final units = await ref
+          .read(unitRepositoryProvider)
+          .getByProperty(propertyId);
       if (mounted) {
         setState(() {
           _unitsForProperty = units;
@@ -100,8 +101,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     if (_selectedPropertyId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Please select a property.'),
-            backgroundColor: AppColors.error),
+          content: Text('Please select a property.'),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
@@ -122,15 +124,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     );
 
     try {
-      await ref
-          .read(financialsControllerProvider.notifier)
-          .addTransaction(tx);
+      await ref.read(financialsControllerProvider.notifier).addTransaction(tx);
       if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -155,13 +157,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               SegmentedButton<String>(
                 segments: [
                   ButtonSegment(
-                      value: 'income',
-                      label: Text(context.l10n.income),
-                      icon: const Icon(Icons.arrow_downward)),
+                    value: 'income',
+                    label: Text(context.l10n.income),
+                    icon: const Icon(Icons.arrow_downward),
+                  ),
                   ButtonSegment(
-                      value: 'expense',
-                      label: Text(context.l10n.expense),
-                      icon: const Icon(Icons.arrow_upward)),
+                    value: 'expense',
+                    label: Text(context.l10n.expense),
+                    icon: const Icon(Icons.arrow_upward),
+                  ),
                 ],
                 selected: {_type},
                 onSelectionChanged: (v) {
@@ -184,15 +188,16 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     prefixIcon: Icon(Icons.home_outlined),
                   ),
                   items: properties
-                      .map((p) => DropdownMenuItem(
-                          value: p.id, child: Text(p.name)))
+                      .map(
+                        (p) =>
+                            DropdownMenuItem(value: p.id, child: Text(p.name)),
+                      )
                       .toList(),
                   onChanged: (v) {
                     setState(() => _selectedPropertyId = v);
                     if (v != null) _loadUnitsForProperty(v);
                   },
-                  validator: (v) =>
-                      v == null ? 'Select a property' : null,
+                  validator: (v) => v == null ? 'Select a property' : null,
                 ),
               ),
               const SizedBox(height: 16),
@@ -210,14 +215,17 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     ),
                     items: [
                       const DropdownMenuItem<String>(
-                          value: null, child: Text('All units / General')),
-                      ..._unitsForProperty.map((u) => DropdownMenuItem(
-                            value: u.id,
-                            child: Text(u.unitLabel),
-                          )),
+                        value: null,
+                        child: Text('All units / General'),
+                      ),
+                      ..._unitsForProperty.map(
+                        (u) => DropdownMenuItem(
+                          value: u.id,
+                          child: Text(u.unitLabel),
+                        ),
+                      ),
                     ],
-                    onChanged: (v) =>
-                        setState(() => _selectedUnitId = v),
+                    onChanged: (v) => setState(() => _selectedUnitId = v),
                   ),
                 const SizedBox(height: 16),
               ],
@@ -230,11 +238,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   prefixIcon: const Icon(Icons.category_outlined),
                 ),
                 items: _categories
-                    .map((c) => DropdownMenuItem(
-                          value: c,
-                          child:
-                              Text(c.replaceAll('_', ' ').toUpperCase()),
-                        ))
+                    .map(
+                      (c) => DropdownMenuItem(
+                        value: c,
+                        child: Text(c.replaceAll('_', ' ').toUpperCase()),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) {
                   if (v != null) setState(() => _category = v);

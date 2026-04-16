@@ -32,13 +32,15 @@ class MaintenanceDetailScreen extends ConsumerWidget {
         ),
       ),
       data: (requests) {
-        final request =
-            requests.where((r) => r.id == maintenanceId).firstOrNull;
+        final request = requests
+            .where((r) => r.id == maintenanceId)
+            .firstOrNull;
         if (request == null) {
           return Scaffold(
             appBar: AppBar(),
             body: const AppErrorWidget(
-                message: 'Maintenance request not found.'),
+              message: 'Maintenance request not found.',
+            ),
           );
         }
         return _DetailBody(request: request);
@@ -60,18 +62,18 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
   bool _isUpdating = false;
 
   Color _priorityColor(String priority) => switch (priority) {
-        'urgent' => AppColors.error,
-        'high' => AppColors.warning,
-        'medium' => AppColors.info,
-        _ => AppColors.disabled,
-      };
+    'urgent' => AppColors.error,
+    'high' => AppColors.warning,
+    'medium' => AppColors.info,
+    _ => AppColors.disabled,
+  };
 
   Color _statusColor(String status) => switch (status) {
-        'open' => AppColors.error,
-        'in_progress' => AppColors.warning,
-        'resolved' => AppColors.success,
-        _ => AppColors.disabled,
-      };
+    'open' => AppColors.error,
+    'in_progress' => AppColors.warning,
+    'resolved' => AppColors.success,
+    _ => AppColors.disabled,
+  };
 
   Future<void> _startWork() async {
     setState(() => _isUpdating = true);
@@ -83,7 +85,9 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -137,7 +141,9 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -153,12 +159,16 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
         content: Text(context.l10n.cannotBeUndone),
         actions: [
           TextButton(
-              onPressed: () => ctx.pop(false),
-              child: Text(context.l10n.cancel)),
+            onPressed: () => ctx.pop(false),
+            child: Text(context.l10n.cancel),
+          ),
           TextButton(
-              onPressed: () => ctx.pop(true),
-              child: Text(context.l10n.delete,
-                  style: const TextStyle(color: AppColors.error))),
+            onPressed: () => ctx.pop(true),
+            child: Text(
+              context.l10n.delete,
+              style: const TextStyle(color: AppColors.error),
+            ),
+          ),
         ],
       ),
     );
@@ -197,11 +207,12 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: _priorityColor(req.priority)
-                      .withValues(alpha: 0.15),
+                  color: _priorityColor(req.priority).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -214,11 +225,12 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: _statusColor(req.status)
-                      .withValues(alpha: 0.15),
+                  color: _statusColor(req.status).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -234,15 +246,16 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
           const SizedBox(height: 24),
 
           // --- Description ---
-          if (req.description != null &&
-              req.description!.isNotEmpty) ...[
+          if (req.description != null && req.description!.isNotEmpty) ...[
             Text(context.l10n.description, style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child:
-                    Text(req.description!, style: theme.textTheme.bodyMedium),
+                child: Text(
+                  req.description!,
+                  style: theme.textTheme.bodyMedium,
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -330,9 +343,11 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon,
-              size: 20,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+          Icon(
+            icon,
+            size: 20,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
           const SizedBox(width: 12),
           SizedBox(
             width: 110,
@@ -343,9 +358,7 @@ class _DetailRow extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value, style: theme.textTheme.bodyMedium),
-          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );

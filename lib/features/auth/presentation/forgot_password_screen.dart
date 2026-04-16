@@ -35,9 +35,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(authRepositoryProvider).resetPassword(
-            email: _emailCtrl.text.trim(),
-          );
+      await ref
+          .read(authRepositoryProvider)
+          .resetPassword(email: _emailCtrl.text.trim());
       if (mounted) setState(() => _emailSent = true);
     } catch (e) {
       if (mounted) {
@@ -72,21 +72,25 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.mark_email_read_outlined,
-            size: 64, color: Theme.of(context).colorScheme.secondary),
+        Icon(
+          Icons.mark_email_read_outlined,
+          size: 64,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
         const SizedBox(height: 16),
-        Text(context.l10n.passwordResetSent,
-            style: Theme.of(context).textTheme.headlineMedium),
+        Text(
+          context.l10n.passwordResetSent,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
         const SizedBox(height: 8),
         Text(
           'We sent a password reset link to\n${_emailCtrl.text.trim()}',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.6),
-              ),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
         ),
         const SizedBox(height: 32),
         AppButton(
@@ -103,21 +107,25 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.lock_reset,
-              size: 64, color: Theme.of(context).colorScheme.primary),
+          Icon(
+            Icons.lock_reset,
+            size: 64,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(height: 16),
-          Text(context.l10n.forgotPassword,
-              style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            context.l10n.forgotPassword,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
           const SizedBox(height: 8),
           Text(
             context.l10n.enterYourEmail,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.6),
-                ),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
           ),
           const SizedBox(height: 32),
           AppTextField(

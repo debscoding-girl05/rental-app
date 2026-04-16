@@ -31,10 +31,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authControllerProvider.notifier).signIn(
-          email: _emailCtrl.text.trim(),
-          password: _passwordCtrl.text,
-        );
+    await ref
+        .read(authControllerProvider.notifier)
+        .signIn(email: _emailCtrl.text.trim(), password: _passwordCtrl.text);
   }
 
   @override
@@ -79,11 +78,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Text(
                     context.l10n.signInWithEmail,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                   const SizedBox(height: 40),
                   AppTextField(
@@ -122,8 +120,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'OR',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                         ),
                       ),
@@ -134,18 +135,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   OutlinedButton.icon(
                     onPressed: authState.isLoading
                         ? null
-                        : () => ref.read(authControllerProvider.notifier).signInWithGoogle(),
+                        : () => ref
+                              .read(authControllerProvider.notifier)
+                              .signInWithGoogle(),
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 52),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    icon: const Text('G', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                    icon: const Text(
+                      'G',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     label: const Text('Continue with Google'),
                   ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => context.go('/signup'),
-                    child: Text('${context.l10n.dontHaveAccount} ${context.l10n.signUp}'),
+                    child: Text(
+                      '${context.l10n.dontHaveAccount} ${context.l10n.signUp}',
+                    ),
                   ),
                 ],
               ),

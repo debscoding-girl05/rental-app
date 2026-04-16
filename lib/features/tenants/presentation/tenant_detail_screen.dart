@@ -43,8 +43,7 @@ class TenantDetailScreen extends ConsumerWidget {
         ),
       ),
       data: (tenants) {
-        final tenant =
-            tenants.where((t) => t.id == tenantId).firstOrNull;
+        final tenant = tenants.where((t) => t.id == tenantId).firstOrNull;
         if (tenant == null) {
           return Scaffold(
             appBar: AppBar(),
@@ -63,8 +62,7 @@ class _TenantDetailBody extends ConsumerStatefulWidget {
   final Tenant tenant;
 
   @override
-  ConsumerState<_TenantDetailBody> createState() =>
-      _TenantDetailBodyState();
+  ConsumerState<_TenantDetailBody> createState() => _TenantDetailBodyState();
 }
 
 class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
@@ -87,8 +85,8 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
           .where((u) => u.id == widget.tenant.unitId)
           .firstOrNull;
       if (mounted) setState(() => _unit = match);
-    } catch (_) {}
-    finally {
+    } catch (_) {
+    } finally {
       if (mounted) setState(() => _unitLoading = false);
     }
   }
@@ -132,9 +130,12 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
       final client = Supabase.instance.client;
       final userId = client.auth.currentUser!.id;
       final ext = file.path.split('.').last;
-      final path = '$userId/${widget.tenant.id}/${field}_${DateTime.now().millisecondsSinceEpoch}.$ext';
+      final path =
+          '$userId/${widget.tenant.id}/${field}_${DateTime.now().millisecondsSinceEpoch}.$ext';
 
-      await client.storage.from('tenant-files').upload(
+      await client.storage
+          .from('tenant-files')
+          .upload(
             path,
             File(file.path),
             fileOptions: const FileOptions(upsert: true),
@@ -150,9 +151,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
         _ => widget.tenant,
       };
 
-      await ref
-          .read(tenantControllerProvider.notifier)
-          .updateTenant(updated);
+      await ref.read(tenantControllerProvider.notifier).updateTenant(updated);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -213,15 +212,20 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 builder: (ctx) => AlertDialog(
                   title: Text(context.l10n.deleteTenant),
                   content: Text(
-                      'Remove "${tenant.fullName}"? This cannot be undone.'),
+                    'Remove "${tenant.fullName}"? This cannot be undone.',
+                  ),
                   actions: [
                     TextButton(
-                        onPressed: () => ctx.pop(false),
-                        child: Text(context.l10n.cancel)),
+                      onPressed: () => ctx.pop(false),
+                      child: Text(context.l10n.cancel),
+                    ),
                     TextButton(
-                        onPressed: () => ctx.pop(true),
-                        child: Text(context.l10n.delete,
-                            style: const TextStyle(color: AppColors.error))),
+                      onPressed: () => ctx.pop(true),
+                      child: Text(
+                        context.l10n.delete,
+                        style: const TextStyle(color: AppColors.error),
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -250,7 +254,10 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
               padding: const EdgeInsets.all(16),
               children: [
                 // --- Profile header ---
-                _ProfileHeader(tenant: tenant, onUploadPhoto: () => _uploadFile('photo')),
+                _ProfileHeader(
+                  tenant: tenant,
+                  onUploadPhoto: () => _uploadFile('photo'),
+                ),
                 const SizedBox(height: 24),
 
                 // --- Quick Actions ---
@@ -267,8 +274,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                           if (propertyId.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                    'Assign tenant to a unit first'),
+                                content: Text('Assign tenant to a unit first'),
                               ),
                             );
                             return;
@@ -284,8 +290,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                             ),
                           );
                           if (result == true) {
-                            ref.invalidate(
-                                tenantPaymentsProvider(tenant.id));
+                            ref.invalidate(tenantPaymentsProvider(tenant.id));
                           }
                         },
                       ),
@@ -318,8 +323,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                           final result = await Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  EditTenantScreen(tenant: tenant),
+                              builder: (_) => EditTenantScreen(tenant: tenant),
                             ),
                           );
                           if (result == true) {
@@ -333,8 +337,10 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 const SizedBox(height: 24),
 
                 // --- Lease & Financials ---
-                Text(context.l10n.leaseInformation,
-                    style: theme.textTheme.titleMedium),
+                Text(
+                  context.l10n.leaseInformation,
+                  style: theme.textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 Card(
                   child: Padding(
@@ -344,21 +350,24 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                         _DetailRow(
                           icon: Icons.attach_money,
                           label: context.l10n.rentAmount,
-                          value: tenant.rentAmount
-                              .toCurrency(symbol: '$currencySymbol '),
+                          value: tenant.rentAmount.toCurrency(
+                            symbol: '$currencySymbol ',
+                          ),
                         ),
                         if (tenant.depositAmount != null)
                           _DetailRow(
                             icon: Icons.savings_outlined,
                             label: context.l10n.deposit,
-                            value: tenant.depositAmount!
-                                .toCurrency(symbol: '$currencySymbol '),
+                            value: tenant.depositAmount!.toCurrency(
+                              symbol: '$currencySymbol ',
+                            ),
                           ),
                         _DetailRow(
                           icon: Icons.schedule_outlined,
                           label: context.l10n.paymentFrequency,
                           value: PaymentFrequencies.label(
-                              tenant.paymentFrequency),
+                            tenant.paymentFrequency,
+                          ),
                         ),
                         if (tenant.leaseStart != null)
                           _DetailRow(
@@ -382,8 +391,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Recent Payments',
-                        style: theme.textTheme.titleMedium),
+                    Text('Recent Payments', style: theme.textTheme.titleMedium),
                     TextButton(
                       onPressed: () => Navigator.push(
                         context,
@@ -402,10 +410,11 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 const SizedBox(height: 8),
                 paymentsAsync.when(
                   loading: () => const Center(
-                      child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircularProgressIndicator(),
-                  )),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
                   error: (e, _) => Text('Could not load payments'),
                   data: (payments) {
                     if (payments.isEmpty) {
@@ -416,8 +425,9 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                             child: Text(
                               'No payments recorded yet',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.5),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                             ),
                           ),
@@ -426,33 +436,37 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                     }
                     final recent = payments.take(5).toList();
                     return Column(
-                      children: recent.map((p) => _RecentPaymentTile(
-                        payment: p,
-                        currencySymbol: currencySymbol,
-                      )).toList(),
+                      children: recent
+                          .map(
+                            (p) => _RecentPaymentTile(
+                              payment: p,
+                              currencySymbol: currencySymbol,
+                            ),
+                          )
+                          .toList(),
                     );
                   },
                 ),
                 const SizedBox(height: 24),
 
                 // --- Contact Info ---
-                Text(context.l10n.contactInformation,
-                    style: theme.textTheme.titleMedium),
+                Text(
+                  context.l10n.contactInformation,
+                  style: theme.textTheme.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        if (tenant.phone != null &&
-                            tenant.phone!.isNotEmpty)
+                        if (tenant.phone != null && tenant.phone!.isNotEmpty)
                           _DetailRow(
                             icon: Icons.phone_outlined,
                             label: context.l10n.phone,
                             value: tenant.phone!,
                           ),
-                        if (tenant.email != null &&
-                            tenant.email!.isNotEmpty)
+                        if (tenant.email != null && tenant.email!.isNotEmpty)
                           _DetailRow(
                             icon: Icons.email_outlined,
                             label: context.l10n.email,
@@ -475,8 +489,10 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 if (_unitLoading)
                   const Center(child: CircularProgressIndicator())
                 else if (_unit != null) ...[
-                  Text(context.l10n.assignedUnit,
-                      style: theme.textTheme.titleMedium),
+                  Text(
+                    context.l10n.assignedUnit,
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 12),
                   Card(
                     child: Padding(
@@ -506,8 +522,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 ],
 
                 // --- Documents ---
-                Text('Documents & Files',
-                    style: theme.textTheme.titleMedium),
+                Text('Documents & Files', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -541,8 +556,10 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Text(tenant.notes!,
-                          style: theme.textTheme.bodyMedium),
+                      child: Text(
+                        tenant.notes!,
+                        style: theme.textTheme.bodyMedium,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -595,8 +612,11 @@ class _ProfileHeader extends StatelessWidget {
                       color: theme.colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.camera_alt,
-                        color: Colors.white, size: 16),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
               ],
@@ -673,9 +693,11 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon,
-              size: 20,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+          Icon(
+            icon,
+            size: 20,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
           const SizedBox(width: 12),
           SizedBox(
             width: 110,
@@ -686,9 +708,7 @@ class _DetailRow extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value, style: theme.textTheme.bodyMedium),
-          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );
@@ -723,7 +743,9 @@ class _DocumentCard extends StatelessWidget {
             children: [
               Icon(
                 hasFile ? Icons.check_circle : icon,
-                color: hasFile ? AppColors.success : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                color: hasFile
+                    ? AppColors.success
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.4),
                 size: 32,
               ),
               const SizedBox(height: 8),
@@ -779,8 +801,10 @@ class _RecentPaymentTile extends StatelessWidget {
                     payment.periodLabel ?? PaymentTypes.label(payment.type),
                     style: theme.textTheme.bodyMedium,
                   ),
-                  Text(payment.date.formatted,
-                      style: theme.textTheme.bodySmall),
+                  Text(
+                    payment.date.formatted,
+                    style: theme.textTheme.bodySmall,
+                  ),
                 ],
               ),
             ),

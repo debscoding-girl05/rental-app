@@ -50,7 +50,8 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
     _idNumberCtrl = TextEditingController(text: t.idNumber ?? '');
     _rentCtrl = TextEditingController(text: t.rentAmount.toStringAsFixed(0));
     _depositCtrl = TextEditingController(
-        text: t.depositAmount?.toStringAsFixed(0) ?? '');
+      text: t.depositAmount?.toStringAsFixed(0) ?? '',
+    );
     _notesCtrl = TextEditingController(text: t.notes ?? '');
     _selectedUnitId = t.unitId;
     _paymentFrequency = t.paymentFrequency;
@@ -116,10 +117,8 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
 
     final tenant = widget.tenant.copyWith(
       fullName: _nameCtrl.text.trim(),
-      email:
-          _emailCtrl.text.trim().isNotEmpty ? _emailCtrl.text.trim() : null,
-      phone:
-          _phoneCtrl.text.trim().isNotEmpty ? _phoneCtrl.text.trim() : null,
+      email: _emailCtrl.text.trim().isNotEmpty ? _emailCtrl.text.trim() : null,
+      phone: _phoneCtrl.text.trim().isNotEmpty ? _phoneCtrl.text.trim() : null,
       idNumber: _idNumberCtrl.text.trim().isNotEmpty
           ? _idNumberCtrl.text.trim()
           : null,
@@ -129,8 +128,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
       paymentFrequency: _paymentFrequency,
       leaseStart: _leaseStart,
       leaseEnd: _leaseEnd,
-      notes:
-          _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
+      notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
     );
 
     try {
@@ -140,7 +138,9 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -201,8 +201,10 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               if (_unitsLoading)
                 const LinearProgressIndicator()
               else if (_unitsError != null)
-                Text('Could not load units',
-                    style: TextStyle(color: theme.colorScheme.error))
+                Text(
+                  'Could not load units',
+                  style: TextStyle(color: theme.colorScheme.error),
+                )
               else
                 DropdownButtonFormField<String>(
                   initialValue: _selectedUnitId,
@@ -212,12 +214,16 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
                   ),
                   items: [
                     const DropdownMenuItem<String>(
-                        value: null, child: Text('Unassigned')),
+                      value: null,
+                      child: Text('Unassigned'),
+                    ),
                     if (_units != null)
-                      ..._units!.map((u) => DropdownMenuItem(
-                            value: u.id,
-                            child: Text(u.unitLabel),
-                          )),
+                      ..._units!.map(
+                        (u) => DropdownMenuItem(
+                          value: u.id,
+                          child: Text(u.unitLabel),
+                        ),
+                      ),
                   ],
                   onChanged: (v) => setState(() => _selectedUnitId = v),
                 ),
@@ -231,10 +237,12 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
                   prefixIcon: const Icon(Icons.schedule_outlined),
                 ),
                 items: PaymentFrequencies.all
-                    .map((freq) => DropdownMenuItem(
-                          value: freq,
-                          child: Text(PaymentFrequencies.label(freq)),
-                        ))
+                    .map(
+                      (freq) => DropdownMenuItem(
+                        value: freq,
+                        child: Text(PaymentFrequencies.label(freq)),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) {
                   if (v != null) setState(() => _paymentFrequency = v);

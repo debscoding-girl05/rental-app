@@ -93,8 +93,7 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
       rentAmount: double.parse(_rentCtrl.text.trim()),
       depositAmount: double.tryParse(_depositCtrl.text.trim()),
       paymentFrequency: _paymentFrequency,
-      notes:
-          _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
+      notes: _notesCtrl.text.trim().isNotEmpty ? _notesCtrl.text.trim() : null,
     );
 
     try {
@@ -104,7 +103,9 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -160,9 +161,10 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
               if (_unitsLoading)
                 const LinearProgressIndicator()
               else if (_unitsError != null)
-                Text('Could not load units',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.error))
+                Text(
+                  'Could not load units',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                )
               else
                 DropdownButtonFormField<String>(
                   initialValue: _selectedUnitId,
@@ -172,12 +174,16 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
                   ),
                   items: [
                     const DropdownMenuItem<String>(
-                        value: null, child: Text('Unassigned')),
+                      value: null,
+                      child: Text('Unassigned'),
+                    ),
                     if (_units != null)
-                      ..._units!.map((u) => DropdownMenuItem(
-                            value: u.id,
-                            child: Text(u.unitLabel),
-                          )),
+                      ..._units!.map(
+                        (u) => DropdownMenuItem(
+                          value: u.id,
+                          child: Text(u.unitLabel),
+                        ),
+                      ),
                   ],
                   onChanged: (v) => setState(() => _selectedUnitId = v),
                 ),
@@ -191,10 +197,12 @@ class _AddTenantScreenState extends ConsumerState<AddTenantScreen> {
                   prefixIcon: const Icon(Icons.schedule_outlined),
                 ),
                 items: PaymentFrequencies.all
-                    .map((freq) => DropdownMenuItem(
-                          value: freq,
-                          child: Text(PaymentFrequencies.label(freq)),
-                        ))
+                    .map(
+                      (freq) => DropdownMenuItem(
+                        value: freq,
+                        child: Text(PaymentFrequencies.label(freq)),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) {
                   if (v != null) setState(() => _paymentFrequency = v);

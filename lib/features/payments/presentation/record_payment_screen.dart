@@ -65,8 +65,19 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
 
   String _periodLabel() {
     const months = [
-      '', 'Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre',
+      '',
+      'Janvier',
+      'Fevrier',
+      'Mars',
+      'Avril',
+      'Mai',
+      'Juin',
+      'Juillet',
+      'Aout',
+      'Septembre',
+      'Octobre',
+      'Novembre',
+      'Decembre',
     ];
     return '${months[_date.month]} ${_date.year}';
   }
@@ -74,9 +85,9 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
   Future<void> _submit() async {
     final amount = double.tryParse(_amountCtrl.text.trim());
     if (amount == null || amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid amount')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter a valid amount')));
       return;
     }
 
@@ -113,7 +124,10 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -149,8 +163,10 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.tenant.fullName,
-                            style: theme.textTheme.titleMedium),
+                        Text(
+                          widget.tenant.fullName,
+                          style: theme.textTheme.titleMedium,
+                        ),
                         Text(
                           'Rent: $cs ${widget.tenant.rentAmount.toCurrency(symbol: '')}',
                           style: theme.textTheme.bodySmall,
