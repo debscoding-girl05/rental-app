@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/utils/validators.dart';
+import 'package:landlord_os/core/utils/error_utils.dart';
 import 'package:landlord_os/features/auth/presentation/auth_controller.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
@@ -52,7 +53,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       if (next.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.error.toString()),
+            content: Text(ErrorUtils.getUserFriendlyMessage(next.error!)),
             backgroundColor: AppColors.error,
           ),
         );

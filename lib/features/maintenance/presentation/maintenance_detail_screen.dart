@@ -7,6 +7,7 @@ import 'package:landlord_os/core/extensions/datetime_ext.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/core/providers/currency_provider.dart';
+import 'package:landlord_os/core/utils/error_utils.dart';
 import 'package:landlord_os/features/maintenance/domain/maintenance_request_model.dart';
 import 'package:landlord_os/features/maintenance/presentation/maintenance_controller.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
@@ -86,7 +87,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(ErrorUtils.getUserFriendlyMessage(e)),
             backgroundColor: AppColors.error,
           ),
         );
@@ -142,7 +143,7 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(ErrorUtils.getUserFriendlyMessage(e)),
             backgroundColor: AppColors.error,
           ),
         );

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
+import 'package:landlord_os/core/utils/error_utils.dart';
 import 'package:landlord_os/features/maintenance/domain/maintenance_request_model.dart';
 import 'package:landlord_os/features/maintenance/presentation/maintenance_controller.dart';
 import 'package:landlord_os/features/properties/data/unit_repository.dart';
@@ -112,7 +113,7 @@ class _AddRequestScreenState extends ConsumerState<AddRequestScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(ErrorUtils.getUserFriendlyMessage(e)),
             backgroundColor: AppColors.error,
           ),
         );

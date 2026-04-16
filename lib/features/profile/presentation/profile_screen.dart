@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
+import 'package:landlord_os/core/utils/error_utils.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -50,7 +51,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(
+          content: Text(ErrorUtils.getUserFriendlyMessage(e)),
+        ));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -93,7 +96,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(
+          content: Text(ErrorUtils.getUserFriendlyMessage(e)),
+        ));
       }
     } finally {
       if (mounted) setState(() => _saving = false);

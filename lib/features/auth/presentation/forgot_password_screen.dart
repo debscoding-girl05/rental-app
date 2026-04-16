@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/utils/validators.dart';
+import 'package:landlord_os/core/utils/error_utils.dart';
 import 'package:landlord_os/features/auth/data/auth_repository.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
@@ -43,7 +44,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(ErrorUtils.getUserFriendlyMessage(e)),
             backgroundColor: AppColors.error,
           ),
         );

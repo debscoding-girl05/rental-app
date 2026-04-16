@@ -6,6 +6,7 @@ import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/core/utils/validators.dart';
+import 'package:landlord_os/core/utils/error_utils.dart';
 import 'package:landlord_os/features/ai/domain/price_prediction.dart';
 import 'package:landlord_os/features/ai/presentation/ai_controller.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
@@ -71,7 +72,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('AI error: $e'),
+            content: Text(ErrorUtils.getUserFriendlyMessage(e)),
             backgroundColor: AppColors.error,
           ),
         );
