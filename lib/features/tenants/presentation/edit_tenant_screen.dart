@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/properties/data/unit_repository.dart';
 import 'package:landlord_os/features/properties/domain/unit_model.dart';
@@ -155,7 +156,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Tenant')),
+      appBar: AppBar(title: Text(context.l10n.editTenant)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -164,7 +165,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppTextField(
-                label: 'Full Name',
+                label: context.l10n.fullName,
                 controller: _nameCtrl,
                 validator: Validators.required,
                 prefixIcon: Icons.person_outlined,
@@ -172,7 +173,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Phone',
+                label: context.l10n.phone,
                 controller: _phoneCtrl,
                 validator: Validators.phone,
                 keyboardType: TextInputType.phone,
@@ -182,7 +183,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Email (optional)',
+                label: context.l10n.email,
                 controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 prefixIcon: Icons.email_outlined,
@@ -190,7 +191,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'ID Number (CNI / Passport)',
+                label: context.l10n.idNumber,
                 controller: _idNumberCtrl,
                 prefixIcon: Icons.badge_outlined,
               ),
@@ -205,9 +206,9 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               else
                 DropdownButtonFormField<String>(
                   initialValue: _selectedUnitId,
-                  decoration: const InputDecoration(
-                    labelText: 'Assign to Unit',
-                    prefixIcon: Icon(Icons.door_front_door_outlined),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.selectUnit,
+                    prefixIcon: const Icon(Icons.door_front_door_outlined),
                   ),
                   items: [
                     const DropdownMenuItem<String>(
@@ -225,9 +226,9 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               // Payment frequency dropdown
               DropdownButtonFormField<String>(
                 initialValue: _paymentFrequency,
-                decoration: const InputDecoration(
-                  labelText: 'Payment Frequency',
-                  prefixIcon: Icon(Icons.schedule_outlined),
+                decoration: InputDecoration(
+                  labelText: context.l10n.paymentFrequency,
+                  prefixIcon: const Icon(Icons.schedule_outlined),
                 ),
                 items: PaymentFrequencies.all
                     .map((freq) => DropdownMenuItem(
@@ -245,7 +246,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
                 children: [
                   Expanded(
                     child: AppTextField(
-                      label: 'Rent Amount',
+                      label: context.l10n.rentAmount,
                       controller: _rentCtrl,
                       validator: Validators.positiveNumber,
                       keyboardType: TextInputType.number,
@@ -255,7 +256,7 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: AppTextField(
-                      label: 'Deposit',
+                      label: context.l10n.deposit,
                       controller: _depositCtrl,
                       keyboardType: TextInputType.number,
                     ),
@@ -271,9 +272,9 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
                     child: InkWell(
                       onTap: () => _pickDate(isStart: true),
                       child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Lease Start',
-                          prefixIcon: Icon(Icons.calendar_today_outlined),
+                        decoration: InputDecoration(
+                          labelText: context.l10n.leaseStart,
+                          prefixIcon: const Icon(Icons.calendar_today_outlined),
                         ),
                         child: Text(_formatDate(_leaseStart)),
                       ),
@@ -284,9 +285,9 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
                     child: InkWell(
                       onTap: () => _pickDate(isStart: false),
                       child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Lease End',
-                          prefixIcon: Icon(Icons.calendar_today_outlined),
+                        decoration: InputDecoration(
+                          labelText: context.l10n.leaseEnd,
+                          prefixIcon: const Icon(Icons.calendar_today_outlined),
                         ),
                         child: Text(_formatDate(_leaseEnd)),
                       ),
@@ -297,14 +298,14 @@ class _EditTenantScreenState extends ConsumerState<EditTenantScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Notes',
+                label: context.l10n.notes,
                 controller: _notesCtrl,
                 maxLines: 3,
               ),
               const SizedBox(height: 24),
 
               AppButton(
-                label: 'Save Changes',
+                label: context.l10n.save,
                 onPressed: _submit,
                 isLoading: _isSubmitting,
               ),

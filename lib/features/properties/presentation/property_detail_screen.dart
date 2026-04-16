@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/constants/currencies.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/features/properties/domain/property_model.dart';
 import 'package:landlord_os/features/properties/domain/unit_model.dart';
@@ -244,20 +245,20 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Delete Property'),
+                  title: Text(context.l10n.deleteProperty),
                   content: Text(
-                    'Delete "${property.name}"? This cannot be undone.',
+                    '${context.l10n.delete} "${property.name}"? ${context.l10n.cannotBeUndone}',
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => ctx.pop(false),
-                      child: const Text('Cancel'),
+                      child: Text(context.l10n.cancel),
                     ),
                     TextButton(
                       onPressed: () => ctx.pop(true),
-                      child: const Text(
-                        'Delete',
-                        style: TextStyle(color: AppColors.error),
+                      child: Text(
+                        context.l10n.delete,
+                        style: const TextStyle(color: AppColors.error),
                       ),
                     ),
                   ],
@@ -276,7 +277,7 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/properties/${property.id}/units/add'),
         icon: const Icon(Icons.add),
-        label: const Text('Add Unit'),
+        label: Text(context.l10n.addUnit),
       ),
       body: _uploading
           ? const Center(
@@ -429,17 +430,17 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             _StatItem(
-                              label: 'Floors',
+                              label: context.l10n.floors,
                               value: '${property.floors}',
                               icon: Icons.layers_outlined,
                             ),
                             _StatItem(
-                              label: 'Units',
+                              label: context.l10n.units,
                               value: '${property.totalUnits}',
                               icon: Icons.door_front_door_outlined,
                             ),
                             _StatItem(
-                              label: 'Currency',
+                              label: context.l10n.currency,
                               value: property.currency,
                               icon: Icons.monetization_on_outlined,
                             ),
@@ -461,24 +462,24 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                       children: [
                         _DetailRow(
                           icon: Icons.location_on_outlined,
-                          label: 'Address',
+                          label: context.l10n.address,
                           value: property.address,
                         ),
                         if (property.quartier != null &&
                             property.quartier!.isNotEmpty)
                           _DetailRow(
                             icon: Icons.map_outlined,
-                            label: 'Quartier',
+                            label: context.l10n.quartier,
                             value: property.quartier!,
                           ),
                         _DetailRow(
                           icon: Icons.location_city_outlined,
-                          label: 'City',
+                          label: context.l10n.city,
                           value: property.city,
                         ),
                         _DetailRow(
                           icon: Icons.flag_outlined,
-                          label: 'Country',
+                          label: context.l10n.country,
                           value: property.country,
                         ),
                       ],
@@ -500,7 +501,7 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                           if (property.purchasePrice != null)
                             _DetailRow(
                               icon: Icons.account_balance_outlined,
-                              label: 'Purchase Price',
+                              label: context.l10n.purchasePrice,
                               value: property.purchasePrice!.toCurrency(
                                 symbol: '$cs ',
                               ),
@@ -508,7 +509,7 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                           if (property.mortgageMonthly != null)
                             _DetailRow(
                               icon: Icons.credit_card_outlined,
-                              label: 'Mortgage/month',
+                              label: context.l10n.mortgage,
                               value: property.mortgageMonthly!.toCurrency(
                                 symbol: '$cs ',
                               ),
@@ -522,7 +523,7 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
 
                 // --- Notes ---
                 if (property.notes != null && property.notes!.isNotEmpty) ...[
-                  Text('Notes', style: theme.textTheme.titleMedium),
+                  Text(context.l10n.notes, style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Card(
                     child: Padding(
@@ -540,7 +541,7 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Units', style: theme.textTheme.titleLarge),
+                    Text(context.l10n.units, style: theme.textTheme.titleLarge),
                     unitsAsync.whenOrNull(
                           data: (units) => Text(
                             '${units.where((u) => u.isOccupied).length}/${units.length} occupied',
@@ -569,9 +570,9 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                   data: (units) {
                     if (units.isEmpty) {
                       return EmptyStateWidget(
-                        message: 'No units yet.\nAdd units to this property.',
+                        message: '${context.l10n.noUnits}\n${context.l10n.addYourFirstUnit}',
                         icon: Icons.door_front_door_outlined,
-                        actionLabel: 'Add Unit',
+                        actionLabel: context.l10n.addUnit,
                         onAction: () => context.push(
                           '/properties/${property.id}/units/add',
                         ),
@@ -807,7 +808,7 @@ class _UnitTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      unit.isOccupied ? 'Occupied' : 'Vacant',
+                      unit.isOccupied ? context.l10n.occupied : context.l10n.vacant,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: unit.isOccupied
                             ? AppColors.success

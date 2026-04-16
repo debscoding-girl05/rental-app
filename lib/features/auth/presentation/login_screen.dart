@@ -6,6 +6,7 @@ import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/auth/presentation/auth_controller.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/shared/widgets/app_text_field.dart';
 
 /// Email + password login screen.
@@ -76,7 +77,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Sign in to manage your portfolio',
+                    context.l10n.signInWithEmail,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context)
                               .colorScheme
@@ -86,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
                   AppTextField(
-                    label: 'Email',
+                    label: context.l10n.email,
                     controller: _emailCtrl,
                     validator: Validators.email,
                     keyboardType: TextInputType.emailAddress,
@@ -94,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                    label: 'Password',
+                    label: context.l10n.password,
                     controller: _passwordCtrl,
                     validator: Validators.required,
                     obscureText: true,
@@ -104,12 +105,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => context.push('/forgot-password'),
-                      child: const Text('Forgot password?'),
+                      child: Text(context.l10n.forgotPassword),
                     ),
                   ),
                   const SizedBox(height: 8),
                   AppButton(
-                    label: 'Sign In',
+                    label: context.l10n.signIn,
                     onPressed: _submit,
                     isLoading: authState.isLoading,
                   ),
@@ -144,7 +145,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => context.go('/signup'),
-                    child: const Text("Don't have an account? Sign up"),
+                    child: Text('${context.l10n.dontHaveAccount} ${context.l10n.signUp}'),
                   ),
                 ],
               ),

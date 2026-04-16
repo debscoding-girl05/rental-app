@@ -1,4 +1,4 @@
-package com.passif.landlord_os
+package com.passif.landlordos
 
 import io.flutter.embedding.android.FlutterActivity
 

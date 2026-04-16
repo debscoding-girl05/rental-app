@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/constants/currencies.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/properties/domain/property_model.dart';
 import 'package:landlord_os/features/properties/presentation/property_controller.dart';
@@ -169,7 +170,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
     final currencySymbol = Currencies.fromCode(_currency).symbol;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Property')),
+      appBar: AppBar(title: Text(context.l10n.addProperty)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -268,7 +269,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               const SizedBox(height: 20),
 
               AppTextField(
-                label: 'Property Name',
+                label: context.l10n.propertyName,
                 controller: _nameCtrl,
                 validator: Validators.required,
                 prefixIcon: Icons.home_outlined,
@@ -278,9 +279,9 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               // Property type dropdown
               DropdownButtonFormField<String>(
                 initialValue: _propertyType,
-                decoration: const InputDecoration(
-                  labelText: 'Property Type',
-                  prefixIcon: Icon(Icons.category_outlined),
+                decoration: InputDecoration(
+                  labelText: context.l10n.propertyType,
+                  prefixIcon: const Icon(Icons.category_outlined),
                 ),
                 items: PropertyTypes.all
                     .map(
@@ -297,7 +298,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Address',
+                label: context.l10n.address,
                 controller: _addressCtrl,
                 validator: Validators.required,
                 prefixIcon: Icons.location_on_outlined,
@@ -305,7 +306,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Quartier',
+                label: context.l10n.quartier,
                 controller: _quartierCtrl,
                 prefixIcon: Icons.map_outlined,
                 hint: 'e.g. Plateau, Cocody, Yoff',
@@ -316,7 +317,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
                 children: [
                   Expanded(
                     child: AppTextField(
-                      label: 'City',
+                      label: context.l10n.city,
                       controller: _cityCtrl,
                       validator: Validators.required,
                     ),
@@ -324,7 +325,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: AppTextField(
-                      label: 'Country',
+                      label: context.l10n.country,
                       controller: _countryCtrl,
                       validator: Validators.required,
                     ),
@@ -337,7 +338,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
                 children: [
                   Expanded(
                     child: AppTextField(
-                      label: 'Floors',
+                      label: context.l10n.floors,
                       controller: _floorsCtrl,
                       keyboardType: TextInputType.number,
                       prefixIcon: Icons.layers_outlined,
@@ -346,7 +347,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: AppTextField(
-                      label: 'Total Units',
+                      label: context.l10n.numberOfUnits,
                       controller: _totalUnitsCtrl,
                       keyboardType: TextInputType.number,
                       prefixIcon: Icons.door_front_door_outlined,
@@ -359,9 +360,9 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               // Currency dropdown
               DropdownButtonFormField<String>(
                 initialValue: _currency,
-                decoration: const InputDecoration(
-                  labelText: 'Currency',
-                  prefixIcon: Icon(Icons.monetization_on_outlined),
+                decoration: InputDecoration(
+                  labelText: context.l10n.currency,
+                  prefixIcon: const Icon(Icons.monetization_on_outlined),
                 ),
                 items: Currencies.all
                     .map(
@@ -378,7 +379,7 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Purchase Price ($currencySymbol)',
+                label: '${context.l10n.purchasePrice} ($currencySymbol)',
                 controller: _purchasePriceCtrl,
                 keyboardType: TextInputType.number,
                 prefixIcon: Icons.attach_money,
@@ -386,20 +387,20 @@ class _AddPropertyScreenState extends ConsumerState<AddPropertyScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Monthly Mortgage ($currencySymbol)',
+                label: '${context.l10n.mortgage} ($currencySymbol)',
                 controller: _mortgageCtrl,
                 keyboardType: TextInputType.number,
                 prefixIcon: Icons.account_balance_outlined,
               ),
               const SizedBox(height: 16),
 
-              AppTextField(label: 'Notes', controller: _notesCtrl, maxLines: 3),
+              AppTextField(label: context.l10n.notes, controller: _notesCtrl, maxLines: 3),
               const SizedBox(height: 24),
 
               AppButton(
                 label: _pickedPhotos.isEmpty
-                    ? 'Add Property'
-                    : 'Add Property (${_pickedPhotos.length} photos)',
+                    ? context.l10n.addProperty
+                    : '${context.l10n.addProperty} (${_pickedPhotos.length} photos)',
                 onPressed: _submit,
                 isLoading: _isSubmitting,
               ),

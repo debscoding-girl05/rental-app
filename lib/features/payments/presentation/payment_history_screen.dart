@@ -44,14 +44,14 @@ class PaymentHistoryScreen extends ConsumerWidget {
           }
 
           // Separate deposits from rent payments
-          final deposits =
-              payments.where((p) => p.type == 'deposit').toList();
+          final deposits = payments.where((p) => p.type == 'deposit').toList();
           final rents = payments.where((p) => p.type != 'deposit').toList();
 
-          final totalDeposits =
-              deposits.fold<double>(0, (sum, p) => sum + p.amount);
-          final totalRent =
-              rents.fold<double>(0, (sum, p) => sum + p.amount);
+          final totalDeposits = deposits.fold<double>(
+            0,
+            (sum, p) => sum + p.amount,
+          );
+          final totalRent = rents.fold<double>(0, (sum, p) => sum + p.amount);
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -82,13 +82,11 @@ class PaymentHistoryScreen extends ConsumerWidget {
 
               // Deposit section
               if (deposits.isNotEmpty) ...[
-                Text('Deposits (Caution)',
-                    style: theme.textTheme.titleMedium),
+                Text('Deposits (Caution)', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                ...deposits.map((p) => _PaymentTile(
-                      payment: p,
-                      currencySymbol: cs,
-                    )),
+                ...deposits.map(
+                  (p) => _PaymentTile(payment: p, currencySymbol: cs),
+                ),
                 const SizedBox(height: 20),
               ],
 
@@ -101,10 +99,9 @@ class PaymentHistoryScreen extends ConsumerWidget {
                   child: Text('No rent payments yet'),
                 )
               else
-                ...rents.map((p) => _PaymentTile(
-                      payment: p,
-                      currencySymbol: cs,
-                    )),
+                ...rents.map(
+                  (p) => _PaymentTile(payment: p, currencySymbol: cs),
+                ),
             ],
           );
         },
@@ -154,10 +151,7 @@ class _SummaryCard extends StatelessWidget {
 }
 
 class _PaymentTile extends StatelessWidget {
-  const _PaymentTile({
-    required this.payment,
-    required this.currencySymbol,
-  });
+  const _PaymentTile({required this.payment, required this.currencySymbol});
 
   final Payment payment;
   final String currencySymbol;

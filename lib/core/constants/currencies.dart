@@ -1,10 +1,23 @@
 /// Supported currencies with focus on African markets.
 class Currency {
-  const Currency({required this.code, required this.name, required this.symbol});
+  const Currency({
+    required this.code,
+    required this.name,
+    required this.symbol,
+    this.decimalDigits = 2,
+  });
 
   final String code;
   final String name;
   final String symbol;
+  final int decimalDigits;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is Currency && other.code == code;
+
+  @override
+  int get hashCode => code.hashCode;
 
   @override
   String toString() => '$code — $name';

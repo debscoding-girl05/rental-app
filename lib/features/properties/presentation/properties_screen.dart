@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/features/properties/domain/property_model.dart';
 import 'package:landlord_os/features/properties/presentation/property_controller.dart';
 import 'package:landlord_os/features/properties/presentation/unit_controller.dart';
@@ -19,7 +20,7 @@ class PropertiesScreen extends ConsumerWidget {
     final propertiesAsync = ref.watch(propertyControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Properties')),
+      appBar: AppBar(title: Text(context.l10n.properties)),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/properties/add'),
         child: const Icon(Icons.add),
@@ -34,9 +35,9 @@ class PropertiesScreen extends ConsumerWidget {
           if (properties.isEmpty) {
             return EmptyStateWidget(
               message:
-                  'No properties yet.\nAdd your first property to get started.',
+                  '${context.l10n.noProperties}\n${context.l10n.addYourFirstProperty}',
               icon: Icons.home_work_outlined,
-              actionLabel: 'Add Property',
+              actionLabel: context.l10n.addProperty,
               onAction: () => context.push('/properties/add'),
             );
           }

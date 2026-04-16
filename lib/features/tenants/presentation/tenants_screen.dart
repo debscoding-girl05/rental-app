@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/features/tenants/presentation/tenant_controller.dart';
 import 'package:landlord_os/shared/widgets/app_card.dart';
@@ -18,7 +19,7 @@ class TenantsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Tenants')),
+      appBar: AppBar(title: Text(context.l10n.tenants)),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/tenants/add'),
         child: const Icon(Icons.person_add),
@@ -33,9 +34,9 @@ class TenantsScreen extends ConsumerWidget {
           if (tenants.isEmpty) {
             return EmptyStateWidget(
               message:
-                  'No tenants yet.\nAdd your first tenant to get started.',
+                  '${context.l10n.noTenants}\n${context.l10n.addYourFirstTenant}',
               icon: Icons.people_outline,
-              actionLabel: 'Add Tenant',
+              actionLabel: context.l10n.addTenant,
               onAction: () => context.push('/tenants/add'),
             );
           }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/ai/domain/profitability_report.dart';
@@ -70,7 +71,7 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Profitability Analysis')),
+      appBar: AppBar(title: Text(context.l10n.profitabilityAnalysis)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -109,7 +110,7 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
                       prefixIcon: Icons.money_off),
                   const SizedBox(height: 24),
                   AppButton(
-                    label: 'Analyze Profitability',
+                    label: context.l10n.analyze,
                     onPressed: _analyze,
                     isLoading: _isLoading,
                     icon: Icons.analytics,
@@ -139,7 +140,7 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
                       const SizedBox(height: 16),
                       const Divider(),
                       const SizedBox(height: 12),
-                      Text('Verdict', style: theme.textTheme.titleSmall),
+                      Text(context.l10n.recommendation, style: theme.textTheme.titleSmall),
                       const SizedBox(height: 4),
                       Text(_result!.verdict, style: theme.textTheme.bodyMedium),
                     ],

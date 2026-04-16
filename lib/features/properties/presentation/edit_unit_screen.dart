@@ -7,9 +7,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/properties/domain/unit_model.dart';
 import 'package:landlord_os/features/properties/presentation/unit_controller.dart';
+import 'package:landlord_os/features/tenants/data/tenant_repository.dart';
+import 'package:landlord_os/features/tenants/domain/tenant_model.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
 import 'package:landlord_os/shared/widgets/app_text_field.dart';
 
@@ -37,6 +40,12 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
   bool _isSubmitting = false;
   XFile? _pickedPhoto;
 
+  // Tenant assignment
+  List<Tenant> _allTenants = [];
+  String? _assignedTenantId;
+  String? _originalTenantId;
+  bool _tenantsLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +60,25 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
     );
     _notesCtrl = TextEditingController(text: u.notes ?? '');
     _unitType = u.unitType;
+    _loadTenants();
+  }
+
+  Future<void> _loadTenants() async {
+    try {
+      final tenants = await ref.read(tenantRepositoryProvider).getAll();
+      // Find if any tenant is currently assigned to this unit
+      final currentTenant = tenants.where((t) => t.unitId == widget.unit.id).firstOrNull;
+      if (mounted) {
+        setState(() {
+          _allTenants = tenants;
+          _assignedTenantId = currentTenant?.id;
+          _originalTenantId = currentTenant?.id;
+          _tenantsLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _tenantsLoading = false);
+    }
   }
 
   @override
@@ -117,6 +145,8 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
 
     try {
       final photoUrl = await _uploadPhoto();
+      final tenantRepo = ref.read(tenantRepositoryProvider);
+      final tenantChanged = _assignedTenantId != _originalTenantId;
 
       final updated = widget.unit.copyWith(
         unitLabel: _unitLabelCtrl.text.trim(),
@@ -127,6 +157,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
         sizeSqm: double.tryParse(_sizeCtrl.text.trim()),
         rentAmount: double.tryParse(_rentAmountCtrl.text.trim()) ?? 0,
         photoUrl: photoUrl,
+        isOccupied: _assignedTenantId != null,
         notes: _notesCtrl.text.trim().isNotEmpty
             ? _notesCtrl.text.trim()
             : null,
@@ -135,6 +166,24 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
       await ref
           .read(unitControllerProvider(widget.unit.propertyId).notifier)
           .updateUnit(updated);
+
+      // Update tenant assignments if changed
+      if (tenantChanged) {
+        // Unassign the old tenant from this unit
+        if (_originalTenantId != null) {
+          final oldTenant = _allTenants.where((t) => t.id == _originalTenantId).firstOrNull;
+          if (oldTenant != null) {
+            await tenantRepo.update(oldTenant.copyWith(unitId: null));
+          }
+        }
+        // Assign the new tenant to this unit
+        if (_assignedTenantId != null) {
+          final newTenant = _allTenants.where((t) => t.id == _assignedTenantId).firstOrNull;
+          if (newTenant != null) {
+            await tenantRepo.update(newTenant.copyWith(unitId: widget.unit.id));
+          }
+        }
+      }
 
       if (mounted) context.pop(true);
     } catch (e) {
@@ -156,7 +205,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Unit')),
+      appBar: AppBar(title: Text(context.l10n.editUnit)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -234,7 +283,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
               const SizedBox(height: 20),
 
               AppTextField(
-                label: 'Unit Label',
+                label: context.l10n.unitLabel,
                 controller: _unitLabelCtrl,
                 validator: Validators.required,
                 prefixIcon: Icons.door_front_door_outlined,
@@ -243,9 +292,9 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
 
               DropdownButtonFormField<String>(
                 initialValue: _unitType,
-                decoration: const InputDecoration(
-                  labelText: 'Unit Type',
-                  prefixIcon: Icon(Icons.category_outlined),
+                decoration: InputDecoration(
+                  labelText: context.l10n.unitType,
+                  prefixIcon: const Icon(Icons.category_outlined),
                 ),
                 items: UnitTypes.all
                     .map(
@@ -262,7 +311,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Floor Number',
+                label: context.l10n.floorNumber,
                 controller: _floorNumberCtrl,
                 keyboardType: TextInputType.number,
                 prefixIcon: Icons.layers_outlined,
@@ -273,7 +322,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
                 children: [
                   Expanded(
                     child: AppTextField(
-                      label: 'Bedrooms',
+                      label: context.l10n.bedrooms,
                       controller: _bedroomsCtrl,
                       keyboardType: TextInputType.number,
                       prefixIcon: Icons.bed_outlined,
@@ -282,7 +331,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: AppTextField(
-                      label: 'Bathrooms',
+                      label: context.l10n.bathrooms,
                       controller: _bathroomsCtrl,
                       keyboardType: TextInputType.number,
                       prefixIcon: Icons.bathtub_outlined,
@@ -293,7 +342,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Size (sqm)',
+                label: context.l10n.size,
                 controller: _sizeCtrl,
                 keyboardType: TextInputType.number,
                 prefixIcon: Icons.square_foot_outlined,
@@ -301,7 +350,7 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Rent Amount',
+                label: context.l10n.rentAmount,
                 controller: _rentAmountCtrl,
                 validator: Validators.positiveNumber,
                 keyboardType: TextInputType.number,
@@ -309,11 +358,37 @@ class _EditUnitScreenState extends ConsumerState<EditUnitScreen> {
               ),
               const SizedBox(height: 16),
 
-              AppTextField(label: 'Notes', controller: _notesCtrl, maxLines: 3),
+              AppTextField(label: context.l10n.notes, controller: _notesCtrl, maxLines: 3),
+              const SizedBox(height: 20),
+
+              // --- Tenant assignment ---
+              Text(context.l10n.selectTenant, style: theme.textTheme.titleSmall),
+              const SizedBox(height: 8),
+              if (_tenantsLoading)
+                const LinearProgressIndicator()
+              else
+                DropdownButtonFormField<String?>(
+                  initialValue: _assignedTenantId,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.selectTenant,
+                    prefixIcon: const Icon(Icons.person_outlined),
+                  ),
+                  items: [
+                    DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text(context.l10n.vacant),
+                    ),
+                    ..._allTenants.map((t) => DropdownMenuItem<String?>(
+                          value: t.id,
+                          child: Text('${t.fullName}${t.phone != null ? " (${t.phone})" : ""}'),
+                        )),
+                  ],
+                  onChanged: (v) => setState(() => _assignedTenantId = v),
+                ),
               const SizedBox(height: 24),
 
               AppButton(
-                label: 'Save Changes',
+                label: context.l10n.save,
                 onPressed: _submit,
                 isLoading: _isSubmitting,
               ),

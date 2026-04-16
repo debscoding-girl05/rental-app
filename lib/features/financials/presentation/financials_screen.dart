@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/features/financials/data/transaction_repository.dart';
 import 'package:landlord_os/features/financials/domain/financial_summary.dart';
@@ -35,9 +36,9 @@ class FinancialsScreen extends ConsumerWidget {
         data: (transactions) {
           if (transactions.isEmpty) {
             return EmptyStateWidget(
-              message: 'No transactions yet.\nLog income and expenses to see insights.',
+              message: context.l10n.noTransactions,
               icon: Icons.account_balance_wallet_outlined,
-              actionLabel: 'Add Transaction',
+              actionLabel: context.l10n.addTransaction,
               onAction: () => context.push('/financials/add'),
             );
           }
@@ -117,7 +118,7 @@ class _SummaryCards extends StatelessWidget {
           children: [
             Expanded(
               child: StatCard(
-                label: 'Total Income',
+                label: context.l10n.totalIncome,
                 value: summary.totalIncome.toCurrency(),
                 icon: Icons.trending_up,
                 iconColor: AppColors.success,
@@ -126,7 +127,7 @@ class _SummaryCards extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: StatCard(
-                label: 'Total Expenses',
+                label: context.l10n.totalExpenses,
                 value: summary.totalExpenses.toCurrency(),
                 icon: Icons.trending_down,
                 iconColor: AppColors.error,
@@ -139,7 +140,7 @@ class _SummaryCards extends StatelessWidget {
           children: [
             Expanded(
               child: StatCard(
-                label: 'Net Profit',
+                label: context.l10n.netProfit,
                 value: summary.netProfit.toCurrency(),
                 icon: Icons.account_balance,
                 iconColor: summary.netProfit >= 0 ? AppColors.success : AppColors.error,
@@ -148,7 +149,7 @@ class _SummaryCards extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: StatCard(
-                label: 'Profit Margin',
+                label: context.l10n.profitMargin,
                 value: summary.profitMargin.toPercentage(),
                 icon: Icons.pie_chart_outline,
                 iconColor: AppColors.info,
@@ -175,14 +176,14 @@ class _IncomeExpensePieChart extends StatelessWidget {
         sections: [
           PieChartSectionData(
             value: summary.totalIncome,
-            title: 'Income',
+            title: context.l10n.income,
             color: AppColors.success,
             radius: 50,
             titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
           ),
           PieChartSectionData(
             value: summary.totalExpenses,
-            title: 'Expenses',
+            title: context.l10n.expense,
             color: AppColors.error,
             radius: 50,
             titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),

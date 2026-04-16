@@ -42,7 +42,8 @@ class NotificationService {
   Future<bool> requestPermission() async {
     final ios = _plugin
         .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>();
+          IOSFlutterLocalNotificationsPlugin
+        >();
     if (ios != null) {
       final granted = await ios.requestPermissions(
         alert: true,
@@ -53,7 +54,8 @@ class NotificationService {
     }
     final android = _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     if (android != null) {
       return await android.requestNotificationsPermission() ?? false;
     }
@@ -131,9 +133,7 @@ class NotificationService {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
-      AppLogger.info(
-        'Scheduled 3-day reminder for $name on $reminderDate',
-      );
+      AppLogger.info('Scheduled 3-day reminder for $name on $reminderDate');
     }
 
     // Due date
@@ -168,8 +168,6 @@ class NotificationService {
     for (final tenant in tenants) {
       await scheduleRentReminder(tenant);
     }
-    AppLogger.info(
-      'Rescheduled reminders for ${tenants.length} tenant(s)',
-    );
+    AppLogger.info('Rescheduled reminders for ${tenants.length} tenant(s)');
   }
 }

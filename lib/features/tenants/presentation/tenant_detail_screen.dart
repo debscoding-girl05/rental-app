@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/features/payments/domain/payment_model.dart';
 import 'package:landlord_os/features/payments/presentation/payment_controller.dart';
@@ -191,7 +192,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined),
-            tooltip: 'Edit',
+            tooltip: context.l10n.editTenant,
             onPressed: () async {
               final result = await Navigator.push<bool>(
                 context,
@@ -210,17 +211,17 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Delete Tenant'),
+                  title: Text(context.l10n.deleteTenant),
                   content: Text(
                       'Remove "${tenant.fullName}"? This cannot be undone.'),
                   actions: [
                     TextButton(
                         onPressed: () => ctx.pop(false),
-                        child: const Text('Cancel')),
+                        child: Text(context.l10n.cancel)),
                     TextButton(
                         onPressed: () => ctx.pop(true),
-                        child: const Text('Delete',
-                            style: TextStyle(color: AppColors.error))),
+                        child: Text(context.l10n.delete,
+                            style: const TextStyle(color: AppColors.error))),
                   ],
                 ),
               );
@@ -332,7 +333,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 const SizedBox(height: 24),
 
                 // --- Lease & Financials ---
-                Text('Lease & Financials',
+                Text(context.l10n.leaseInformation,
                     style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 Card(
@@ -342,33 +343,33 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                       children: [
                         _DetailRow(
                           icon: Icons.attach_money,
-                          label: 'Rent',
+                          label: context.l10n.rentAmount,
                           value: tenant.rentAmount
                               .toCurrency(symbol: '$currencySymbol '),
                         ),
                         if (tenant.depositAmount != null)
                           _DetailRow(
                             icon: Icons.savings_outlined,
-                            label: 'Deposit (Caution)',
+                            label: context.l10n.deposit,
                             value: tenant.depositAmount!
                                 .toCurrency(symbol: '$currencySymbol '),
                           ),
                         _DetailRow(
                           icon: Icons.schedule_outlined,
-                          label: 'Frequency',
+                          label: context.l10n.paymentFrequency,
                           value: PaymentFrequencies.label(
                               tenant.paymentFrequency),
                         ),
                         if (tenant.leaseStart != null)
                           _DetailRow(
                             icon: Icons.calendar_today_outlined,
-                            label: 'Lease Start',
+                            label: context.l10n.leaseStart,
                             value: tenant.leaseStart!.formatted,
                           ),
                         if (tenant.leaseEnd != null)
                           _DetailRow(
                             icon: Icons.event_outlined,
-                            label: 'Lease End',
+                            label: context.l10n.leaseEnd,
                             value: tenant.leaseEnd!.formatted,
                           ),
                       ],
@@ -435,7 +436,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 const SizedBox(height: 24),
 
                 // --- Contact Info ---
-                Text('Contact Information',
+                Text(context.l10n.contactInformation,
                     style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 Card(
@@ -447,21 +448,21 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                             tenant.phone!.isNotEmpty)
                           _DetailRow(
                             icon: Icons.phone_outlined,
-                            label: 'Phone',
+                            label: context.l10n.phone,
                             value: tenant.phone!,
                           ),
                         if (tenant.email != null &&
                             tenant.email!.isNotEmpty)
                           _DetailRow(
                             icon: Icons.email_outlined,
-                            label: 'Email',
+                            label: context.l10n.email,
                             value: tenant.email!,
                           ),
                         if (tenant.idNumber != null &&
                             tenant.idNumber!.isNotEmpty)
                           _DetailRow(
                             icon: Icons.badge_outlined,
-                            label: 'ID (CNI)',
+                            label: context.l10n.idNumber,
                             value: tenant.idNumber!,
                           ),
                       ],
@@ -474,7 +475,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                 if (_unitLoading)
                   const Center(child: CircularProgressIndicator())
                 else if (_unit != null) ...[
-                  Text('Assigned Unit',
+                  Text(context.l10n.assignedUnit,
                       style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Card(
@@ -535,7 +536,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
 
                 // --- Notes ---
                 if (tenant.notes != null && tenant.notes!.isNotEmpty) ...[
-                  Text('Notes', style: theme.textTheme.titleMedium),
+                  Text(context.l10n.notes, style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Card(
                     child: Padding(

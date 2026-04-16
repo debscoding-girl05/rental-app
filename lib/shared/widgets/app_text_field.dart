@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// Standardized text input field with optional validation.
+///
+/// Uses the filled style from the theme with rounded corners and a clean
+/// floating label.
 class AppTextField extends StatelessWidget {
   const AppTextField({
     required this.label,
@@ -27,6 +30,8 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TextFormField(
       controller: controller,
       validator: validator,
@@ -34,10 +39,16 @@ class AppTextField extends StatelessWidget {
       obscureText: obscureText,
       maxLines: maxLines,
       onChanged: onChanged,
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        prefixIcon: prefixIcon != null
+            ? Icon(
+                prefixIcon,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
+              )
+            : null,
       ),
     );
   }

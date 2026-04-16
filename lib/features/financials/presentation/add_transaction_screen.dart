@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/financials/domain/transaction_model.dart';
 import 'package:landlord_os/features/financials/presentation/financials_controller.dart';
@@ -142,7 +143,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final propertiesAsync = ref.watch(propertyControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Transaction')),
+      appBar: AppBar(title: Text(context.l10n.addTransaction)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -152,15 +153,15 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             children: [
               // Type toggle
               SegmentedButton<String>(
-                segments: const [
+                segments: [
                   ButtonSegment(
                       value: 'income',
-                      label: Text('Income'),
-                      icon: Icon(Icons.arrow_downward)),
+                      label: Text(context.l10n.income),
+                      icon: const Icon(Icons.arrow_downward)),
                   ButtonSegment(
                       value: 'expense',
-                      label: Text('Expense'),
-                      icon: Icon(Icons.arrow_upward)),
+                      label: Text(context.l10n.expense),
+                      icon: const Icon(Icons.arrow_upward)),
                 ],
                 selected: {_type},
                 onSelectionChanged: (v) {
@@ -224,9 +225,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               // Category dropdown
               DropdownButtonFormField<String>(
                 initialValue: _category,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  prefixIcon: Icon(Icons.category_outlined),
+                decoration: InputDecoration(
+                  labelText: context.l10n.category,
+                  prefixIcon: const Icon(Icons.category_outlined),
                 ),
                 items: _categories
                     .map((c) => DropdownMenuItem(
@@ -242,7 +243,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Amount',
+                label: context.l10n.amount,
                 controller: _amountCtrl,
                 validator: Validators.positiveNumber,
                 keyboardType: TextInputType.number,
@@ -254,7 +255,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.calendar_today),
-                title: const Text('Date'),
+                title: Text(context.l10n.date),
                 subtitle: Text(
                   '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
                 ),
@@ -266,14 +267,14 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               const SizedBox(height: 16),
 
               AppTextField(
-                label: 'Description (optional)',
+                label: context.l10n.description,
                 controller: _descriptionCtrl,
                 maxLines: 2,
               ),
               const SizedBox(height: 24),
 
               AppButton(
-                label: 'Add Transaction',
+                label: context.l10n.addTransaction,
                 onPressed: _submit,
                 isLoading: _isSubmitting,
               ),

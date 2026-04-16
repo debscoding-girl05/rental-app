@@ -6,6 +6,7 @@ import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/auth/data/auth_repository.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/shared/widgets/app_text_field.dart';
 
 /// Screen to request a password reset email.
@@ -55,7 +56,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset Password')),
+      appBar: AppBar(title: Text(context.l10n.resetPassword)),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -74,7 +75,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         Icon(Icons.mark_email_read_outlined,
             size: 64, color: Theme.of(context).colorScheme.secondary),
         const SizedBox(height: 16),
-        Text('Check your email',
+        Text(context.l10n.passwordResetSent,
             style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 8),
         Text(
@@ -89,7 +90,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         ),
         const SizedBox(height: 32),
         AppButton(
-          label: 'Back to Sign In',
+          label: context.l10n.signIn,
           onPressed: () => context.go('/login'),
         ),
       ],
@@ -105,11 +106,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           Icon(Icons.lock_reset,
               size: 64, color: Theme.of(context).colorScheme.primary),
           const SizedBox(height: 16),
-          Text('Forgot Password?',
+          Text(context.l10n.forgotPassword,
               style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 8),
           Text(
-            "Enter your email and we'll send you a reset link.",
+            context.l10n.enterYourEmail,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context)
@@ -120,7 +121,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ),
           const SizedBox(height: 32),
           AppTextField(
-            label: 'Email',
+            label: context.l10n.email,
             controller: _emailCtrl,
             validator: Validators.email,
             keyboardType: TextInputType.emailAddress,
@@ -128,14 +129,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ),
           const SizedBox(height: 24),
           AppButton(
-            label: 'Send Reset Link',
+            label: context.l10n.resetPassword,
             onPressed: _submit,
             isLoading: _isLoading,
           ),
           const SizedBox(height: 16),
           TextButton(
             onPressed: () => context.go('/login'),
-            child: const Text('Back to Sign In'),
+            child: Text(context.l10n.signIn),
           ),
         ],
       ),

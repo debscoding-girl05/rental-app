@@ -6,6 +6,7 @@ import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/auth/presentation/auth_controller.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/shared/widgets/app_text_field.dart';
 
 /// Account creation screen.
@@ -76,12 +77,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Create Account',
+                    context.l10n.createAccount,
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Start managing your properties',
+                    context.l10n.createYourAccount,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context)
                               .colorScheme
@@ -91,13 +92,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 40),
                   AppTextField(
-                    label: 'Full Name',
+                    label: context.l10n.fullName,
                     controller: _nameCtrl,
                     prefixIcon: Icons.person_outlined,
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                    label: 'Email',
+                    label: context.l10n.email,
                     controller: _emailCtrl,
                     validator: Validators.email,
                     keyboardType: TextInputType.emailAddress,
@@ -105,13 +106,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
-                    label: 'Password',
+                    label: context.l10n.password,
                     controller: _passwordCtrl,
                     validator: (v) {
                       final base = Validators.required(v);
                       if (base != null) return base;
                       if (v != null && v.length < 6) {
-                        return 'Password must be at least 6 characters.';
+                        return context.l10n.passwordTooShort;
                       }
                       return null;
                     },
@@ -120,14 +121,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 24),
                   AppButton(
-                    label: 'Create Account',
+                    label: context.l10n.createAccount,
                     onPressed: _submit,
                     isLoading: authState.isLoading,
                   ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () => context.go('/login'),
-                    child: const Text('Already have an account? Sign in'),
+                    child: Text('${context.l10n.alreadyHaveAccount} ${context.l10n.signIn}'),
                   ),
                 ],
               ),

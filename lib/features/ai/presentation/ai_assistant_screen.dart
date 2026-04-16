@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/features/ai/presentation/ai_controller.dart';
 
 /// AI assistant chat interface powered by Groq.
@@ -71,7 +72,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('AI Assistant')),
+      appBar: AppBar(title: Text(context.l10n.aiAssistant)),
       body: Column(
         children: [
           Expanded(
@@ -86,7 +87,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                               size: 48, color: theme.colorScheme.primary.withValues(alpha: 0.5)),
                           const SizedBox(height: 16),
                           Text(
-                            'Ask me anything about\nproperty management',
+                            context.l10n.askAI,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
@@ -120,7 +121,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                     child: TextField(
                       controller: _messageCtrl,
                       decoration: InputDecoration(
-                        hintText: 'Ask a question...',
+                        hintText: context.l10n.askAI,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),

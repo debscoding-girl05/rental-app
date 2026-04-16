@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/features/payments/domain/payment_model.dart';
@@ -185,7 +186,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
             keyboardType: TextInputType.number,
             style: theme.textTheme.headlineMedium,
             decoration: InputDecoration(
-              labelText: 'Amount',
+              labelText: context.l10n.amount,
               prefixText: '$cs ',
               border: const OutlineInputBorder(),
             ),
@@ -196,10 +197,10 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
           InkWell(
             onTap: _pickDate,
             child: InputDecorator(
-              decoration: const InputDecoration(
-                labelText: 'Payment Date',
-                prefixIcon: Icon(Icons.calendar_today_outlined),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.date,
+                prefixIcon: const Icon(Icons.calendar_today_outlined),
+                border: const OutlineInputBorder(),
               ),
               child: Text(_date.formatted),
             ),
@@ -226,9 +227,9 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
           TextFormField(
             controller: _notesCtrl,
             maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Notes (optional)',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.notes,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 24),

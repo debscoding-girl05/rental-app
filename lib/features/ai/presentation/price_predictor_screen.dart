@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/ai/domain/price_prediction.dart';
@@ -77,7 +78,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Price Predictor')),
+      appBar: AppBar(title: Text(context.l10n.pricePredictor)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -125,12 +126,12 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                       keyboardType: TextInputType.number),
                   const SizedBox(height: 16),
                   AppTextField(
-                      label: 'Additional notes (optional)',
+                      label: context.l10n.notes,
                       controller: _notesCtrl,
                       maxLines: 2),
                   const SizedBox(height: 24),
                   AppButton(
-                    label: 'Predict Rent Price',
+                    label: context.l10n.predict,
                     onPressed: _predict,
                     isLoading: _isLoading,
                     icon: Icons.auto_awesome,
@@ -146,7 +147,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Suggested Rent Range',
+                      Text(context.l10n.estimatedPrice,
                           style: theme.textTheme.titleMedium),
                       const SizedBox(height: 12),
                       Row(
@@ -176,7 +177,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Text('Reasoning', style: theme.textTheme.titleSmall),
+                      Text(context.l10n.recommendation, style: theme.textTheme.titleSmall),
                       const SizedBox(height: 4),
                       Text(_result!.reasoning,
                           style: theme.textTheme.bodyMedium),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:landlord_os/core/providers/locale_provider.dart';
 import 'package:landlord_os/core/theme/app_theme.dart';
 import 'package:landlord_os/core/theme/dark_theme.dart';
+import 'package:landlord_os/l10n/app_localizations.dart';
 import 'package:landlord_os/features/auth/presentation/login_screen.dart';
 import 'package:landlord_os/features/auth/presentation/signup_screen.dart';
 import 'package:landlord_os/features/dashboard/presentation/dashboard_screen.dart';
@@ -21,6 +24,9 @@ import 'package:landlord_os/features/auth/presentation/forgot_password_screen.da
 import 'package:landlord_os/features/ai/presentation/ai_assistant_screen.dart';
 import 'package:landlord_os/features/ai/presentation/price_predictor_screen.dart';
 import 'package:landlord_os/features/ai/presentation/profitability_screen.dart';
+import 'package:landlord_os/features/maintenance/presentation/maintenance_screen.dart';
+import 'package:landlord_os/features/maintenance/presentation/add_request_screen.dart';
+import 'package:landlord_os/features/maintenance/presentation/maintenance_detail_screen.dart';
 
 /// Root widget for LandlordOS.
 class LandlordOSApp extends ConsumerWidget {
@@ -28,12 +34,22 @@ class LandlordOSApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp.router(
       title: 'LandlordOS',
       debugShowCheckedModeBanner: false,
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
       themeMode: ThemeMode.system,
+      locale: locale,
+      supportedLocales: supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: _router,
     );
   }
@@ -47,6 +63,7 @@ class _AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
@@ -57,12 +74,32 @@ class _AppShell extends StatelessWidget {
             initialLocation: index == navigationShell.currentIndex,
           );
         },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Dashboard'),
-          NavigationDestination(icon: Icon(Icons.home_work_outlined), selectedIcon: Icon(Icons.home_work), label: 'Properties'),
-          NavigationDestination(icon: Icon(Icons.people_outline), selectedIcon: Icon(Icons.people), label: 'Tenants'),
-          NavigationDestination(icon: Icon(Icons.account_balance_wallet_outlined), selectedIcon: Icon(Icons.account_balance_wallet), label: 'Financials'),
-          NavigationDestination(icon: Icon(Icons.auto_awesome_outlined), selectedIcon: Icon(Icons.auto_awesome), label: 'AI'),
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard),
+            label: l10n.navDashboard,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.home_work_outlined),
+            selectedIcon: const Icon(Icons.home_work),
+            label: l10n.navProperties,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.people_outline),
+            selectedIcon: const Icon(Icons.people),
+            label: l10n.navTenants,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.account_balance_wallet_outlined),
+            selectedIcon: const Icon(Icons.account_balance_wallet),
+            label: l10n.navFinancials,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.auto_awesome_outlined),
+            selectedIcon: const Icon(Icons.auto_awesome),
+            label: l10n.navAI,
+          ),
         ],
       ),
     );
@@ -91,17 +128,29 @@ final _router = GoRouter(
   },
   routes: [
     // Auth routes (no bottom nav)
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
-    GoRoute(
-      path: '/signup',
-      builder: (context, state) => const SignupScreen(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+    GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
     GoRoute(
       path: '/forgot-password',
       builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+
+    // Maintenance routes (no bottom nav)
+    GoRoute(
+      path: '/maintenance',
+      builder: (context, state) => const MaintenanceScreen(),
+      routes: [
+        GoRoute(
+          path: 'add',
+          builder: (context, state) => const AddRequestScreen(),
+        ),
+        GoRoute(
+          path: ':id',
+          builder: (context, state) => MaintenanceDetailScreen(
+            maintenanceId: state.pathParameters['id']!,
+          ),
+        ),
+      ],
     ),
 
     // Main app shell with bottom nav
@@ -162,9 +211,8 @@ final _router = GoRouter(
                 ),
                 GoRoute(
                   path: ':id',
-                  builder: (context, state) => TenantDetailScreen(
-                    tenantId: state.pathParameters['id']!,
-                  ),
+                  builder: (context, state) =>
+                      TenantDetailScreen(tenantId: state.pathParameters['id']!),
                 ),
               ],
             ),

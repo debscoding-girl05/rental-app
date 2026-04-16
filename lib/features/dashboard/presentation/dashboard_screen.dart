@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
+import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
 import 'package:landlord_os/core/services/notification_service.dart';
 import 'package:landlord_os/features/financials/data/transaction_repository.dart';
@@ -14,6 +15,8 @@ import 'package:landlord_os/features/payments/presentation/payment_controller.da
 import 'package:landlord_os/features/properties/data/unit_repository.dart';
 import 'package:landlord_os/features/properties/presentation/property_controller.dart';
 import 'package:landlord_os/features/tenants/presentation/tenant_controller.dart';
+import 'package:landlord_os/features/maintenance/presentation/maintenance_controller.dart';
+import 'package:landlord_os/core/providers/locale_provider.dart';
 import 'package:landlord_os/shared/widgets/stat_card.dart';
 
 /// Main dashboard showing portfolio overview metrics.
@@ -27,6 +30,7 @@ class DashboardScreen extends ConsumerWidget {
     final tenantsAsync = ref.watch(tenantControllerProvider);
     final txAsync = ref.watch(financialsControllerProvider);
     final paymentsAsync = ref.watch(paymentControllerProvider);
+    final maintenanceAsync = ref.watch(maintenanceControllerProvider);
 
     // Reschedule rent reminders whenever tenant data loads/changes.
     ref.listen(tenantControllerProvider, (_, next) {
@@ -36,7 +40,8 @@ class DashboardScreen extends ConsumerWidget {
     });
 
     final user = Supabase.instance.client.auth.currentUser;
-    final displayName = user?.userMetadata?['full_name'] as String? ??
+    final displayName =
+        user?.userMetadata?['full_name'] as String? ??
         user?.email?.split('@').first ??
         'Landlord';
 
@@ -45,10 +50,7 @@ class DashboardScreen extends ConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Hello, $displayName',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text(context.l10n.helloUser(displayName), style: theme.textTheme.titleMedium),
             Text(
               DateTime.now().formatted,
               style: theme.textTheme.bodySmall?.copyWith(
@@ -58,23 +60,37 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
         actions: [
+          // Language toggle
+          IconButton(
+            icon: Text(
+              ref.watch(localeProvider).languageCode.toUpperCase(),
+              style: theme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            tooltip: 'Switch language',
+            onPressed: () {
+              ref.read(localeProvider.notifier).toggleLocale();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout_outlined),
-            tooltip: 'Sign out',
+            tooltip: context.l10n.signOut,
             onPressed: () async {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Sign Out'),
-                  content: const Text('Are you sure you want to sign out?'),
+                  title: Text(context.l10n.signOut),
+                  content: Text(context.l10n.areYouSure),
                   actions: [
                     TextButton(
                       onPressed: () => ctx.pop(false),
-                      child: const Text('Cancel'),
+                      child: Text(context.l10n.cancel),
                     ),
                     TextButton(
                       onPressed: () => ctx.pop(true),
-                      child: const Text('Sign Out'),
+                      child: Text(context.l10n.signOut),
                     ),
                   ],
                 ),
@@ -99,7 +115,7 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // --- Financial Summary ---
-          Text('Financial Overview', style: theme.textTheme.titleMedium),
+          Text(context.l10n.financialOverview, style: theme.textTheme.titleMedium),
           const SizedBox(height: 12),
           txAsync.when(
             loading: () => const SizedBox(
@@ -114,10 +130,11 @@ class DashboardScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     child: Center(
                       child: Text(
-                        'No transactions yet',
+                        context.l10n.noTransactions,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
                     ),
@@ -134,7 +151,7 @@ class DashboardScreen extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: StatCard(
-                          label: 'Income',
+                          label: context.l10n.income,
                           value: summary.totalIncome.toCurrency(),
                           icon: Icons.trending_up,
                           iconColor: AppColors.success,
@@ -143,7 +160,7 @@ class DashboardScreen extends ConsumerWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: StatCard(
-                          label: 'Expenses',
+                          label: context.l10n.totalExpenses,
                           value: summary.totalExpenses.toCurrency(),
                           icon: Icons.trending_down,
                           iconColor: AppColors.error,
@@ -156,7 +173,7 @@ class DashboardScreen extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: StatCard(
-                          label: 'Net Profit',
+                          label: context.l10n.netProfit,
                           value: summary.netProfit.toCurrency(),
                           icon: Icons.account_balance,
                           iconColor: summary.netProfit >= 0
@@ -167,7 +184,7 @@ class DashboardScreen extends ConsumerWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: StatCard(
-                          label: 'Margin',
+                          label: context.l10n.profitMargin,
                           value: summary.profitMargin.toPercentage(),
                           icon: Icons.pie_chart_outline,
                           iconColor: AppColors.info,
@@ -175,8 +192,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  if (summary.totalIncome > 0 ||
-                      summary.totalExpenses > 0) ...[
+                  if (summary.totalIncome > 0 || summary.totalExpenses > 0) ...[
                     const SizedBox(height: 16),
                     SizedBox(
                       height: 160,
@@ -196,10 +212,10 @@ class DashboardScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Recent Payments', style: theme.textTheme.titleMedium),
+              Text(context.l10n.recentPayments, style: theme.textTheme.titleMedium),
               TextButton(
                 onPressed: () => context.go('/financials'),
-                child: const Text('See All'),
+                child: Text(context.l10n.viewAll),
               ),
             ],
           ),
@@ -217,10 +233,11 @@ class DashboardScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     child: Center(
                       child: Text(
-                        'No payments recorded yet',
+                        context.l10n.noTransactions,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
                     ),
@@ -235,7 +252,9 @@ class DashboardScreen extends ConsumerWidget {
                     margin: const EdgeInsets.only(bottom: 6),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -256,8 +275,10 @@ class DashboardScreen extends ConsumerWidget {
                                   p.periodLabel ?? p.type.toUpperCase(),
                                   style: theme.textTheme.bodyMedium,
                                 ),
-                                Text(p.date.formatted,
-                                    style: theme.textTheme.bodySmall),
+                                Text(
+                                  p.date.formatted,
+                                  style: theme.textTheme.bodySmall,
+                                ),
                               ],
                             ),
                           ),
@@ -277,8 +298,56 @@ class DashboardScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
 
+          // --- Maintenance Summary ---
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(context.l10n.maintenance, style: theme.textTheme.titleMedium),
+              TextButton(
+                onPressed: () => context.push('/maintenance'),
+                child: Text(context.l10n.viewAll),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          maintenanceAsync.when(
+            loading: () => const SizedBox(
+              height: 80,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (_, __) => const SizedBox.shrink(),
+            data: (requests) {
+              final openCount =
+                  requests.where((r) => r.status == 'open').length;
+              final urgentCount =
+                  requests.where((r) => r.priority == 'urgent').length;
+              return Row(
+                children: [
+                  Expanded(
+                    child: StatCard(
+                      label: context.l10n.statusOpen,
+                      value: '$openCount',
+                      icon: Icons.build_outlined,
+                      iconColor: AppColors.warning,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: StatCard(
+                      label: context.l10n.priorityUrgent,
+                      value: '$urgentCount',
+                      icon: Icons.warning_amber_outlined,
+                      iconColor: AppColors.error,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+
           // --- Quick Actions ---
-          Text('Quick Actions', style: theme.textTheme.titleMedium),
+          Text(context.l10n.quickActions, style: theme.textTheme.titleMedium),
           const SizedBox(height: 12),
           // Row 1
           Row(
@@ -286,7 +355,7 @@ class DashboardScreen extends ConsumerWidget {
               Expanded(
                 child: _QuickAction(
                   icon: Icons.home_work_outlined,
-                  label: 'Add Property',
+                  label: context.l10n.addProperty,
                   color: theme.colorScheme.primary,
                   onTap: () => context.push('/properties/add'),
                 ),
@@ -295,7 +364,7 @@ class DashboardScreen extends ConsumerWidget {
               Expanded(
                 child: _QuickAction(
                   icon: Icons.person_add_outlined,
-                  label: 'Add Tenant',
+                  label: context.l10n.addTenant,
                   color: theme.colorScheme.secondary,
                   onTap: () => context.push('/tenants/add'),
                 ),
@@ -304,7 +373,7 @@ class DashboardScreen extends ConsumerWidget {
               Expanded(
                 child: _QuickAction(
                   icon: Icons.add_chart_outlined,
-                  label: 'Transaction',
+                  label: context.l10n.addTransaction,
                   color: theme.colorScheme.tertiary,
                   onTap: () => context.push('/financials/add'),
                 ),
@@ -318,7 +387,7 @@ class DashboardScreen extends ConsumerWidget {
               Expanded(
                 child: _QuickAction(
                   icon: Icons.auto_awesome_outlined,
-                  label: 'AI Assistant',
+                  label: context.l10n.aiAssistant,
                   color: AppColors.info,
                   onTap: () => context.go('/ai/assistant'),
                 ),
@@ -327,20 +396,18 @@ class DashboardScreen extends ConsumerWidget {
               Expanded(
                 child: _QuickAction(
                   icon: Icons.price_change_outlined,
-                  label: 'Price Predict',
+                  label: context.l10n.pricePredictor,
                   color: AppColors.warning,
-                  onTap: () =>
-                      context.push('/ai/assistant/price-predictor'),
+                  onTap: () => context.push('/ai/assistant/price-predictor'),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _QuickAction(
                   icon: Icons.analytics_outlined,
-                  label: 'Profitability',
+                  label: context.l10n.profitabilityAnalysis,
                   color: AppColors.success,
-                  onTap: () =>
-                      context.push('/ai/assistant/profitability'),
+                  onTap: () => context.push('/ai/assistant/profitability'),
                 ),
               ),
             ],
@@ -396,10 +463,8 @@ class _PortfolioStatsState extends State<_PortfolioStats> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final propertyCount =
-        widget.propertiesAsync.valueOrNull?.length ?? 0;
-    final tenantCount =
-        widget.tenantsAsync.valueOrNull?.length ?? 0;
+    final propertyCount = widget.propertiesAsync.valueOrNull?.length ?? 0;
+    final tenantCount = widget.tenantsAsync.valueOrNull?.length ?? 0;
     final occupancyRate = _totalUnits > 0
         ? (_occupiedUnits / _totalUnits * 100)
         : 0.0;
@@ -410,7 +475,7 @@ class _PortfolioStatsState extends State<_PortfolioStats> {
           children: [
             Expanded(
               child: StatCard(
-                label: 'Properties',
+                label: context.l10n.properties,
                 value: '$propertyCount',
                 icon: Icons.home_work_outlined,
                 iconColor: theme.colorScheme.primary,
@@ -419,7 +484,7 @@ class _PortfolioStatsState extends State<_PortfolioStats> {
             const SizedBox(width: 12),
             Expanded(
               child: StatCard(
-                label: 'Tenants',
+                label: context.l10n.tenants,
                 value: '$tenantCount',
                 icon: Icons.people_outlined,
                 iconColor: theme.colorScheme.secondary,
@@ -432,10 +497,8 @@ class _PortfolioStatsState extends State<_PortfolioStats> {
           children: [
             Expanded(
               child: StatCard(
-                label: 'Units',
-                value: _loaded
-                    ? '$_occupiedUnits / $_totalUnits'
-                    : '...',
+                label: context.l10n.units,
+                value: _loaded ? '$_occupiedUnits / $_totalUnits' : '...',
                 icon: Icons.door_front_door_outlined,
                 iconColor: theme.colorScheme.tertiary,
               ),
@@ -443,16 +506,14 @@ class _PortfolioStatsState extends State<_PortfolioStats> {
             const SizedBox(width: 12),
             Expanded(
               child: StatCard(
-                label: 'Occupancy',
-                value: _loaded
-                    ? occupancyRate.toPercentage()
-                    : '...',
+                label: context.l10n.occupancy,
+                value: _loaded ? occupancyRate.toPercentage() : '...',
                 icon: Icons.bar_chart_outlined,
                 iconColor: occupancyRate >= 80
                     ? AppColors.success
                     : occupancyRate >= 50
-                        ? AppColors.warning
-                        : AppColors.error,
+                    ? AppColors.warning
+                    : AppColors.error,
               ),
             ),
           ],
@@ -477,23 +538,25 @@ class _MiniPieChart extends StatelessWidget {
         sections: [
           PieChartSectionData(
             value: income,
-            title: 'Income',
+            title: context.l10n.income,
             color: AppColors.success,
             radius: 42,
             titleStyle: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.white),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
           PieChartSectionData(
             value: expenses,
-            title: 'Expenses',
+            title: context.l10n.totalExpenses,
             color: AppColors.error,
             radius: 42,
             titleStyle: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.white),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
