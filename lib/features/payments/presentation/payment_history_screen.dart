@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
+import 'package:landlord_os/core/constants/currencies.dart';
 import 'package:landlord_os/features/payments/domain/payment_model.dart';
 import 'package:landlord_os/features/payments/presentation/payment_controller.dart';
 import 'package:landlord_os/shared/widgets/empty_state_widget.dart';
@@ -25,7 +27,7 @@ class PaymentHistoryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final paymentsAsync = ref.watch(tenantPaymentsProvider(tenantId));
     final theme = Theme.of(context);
-    final cs = currencySymbol;
+    final currency = ref.watch(currencyProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text('Payments - $tenantName')),
@@ -62,7 +64,7 @@ class PaymentHistoryScreen extends ConsumerWidget {
                   Expanded(
                     child: _SummaryCard(
                       title: 'Total Deposits',
-                      amount: totalDeposits.toCurrency(symbol: '$cs '),
+                      amount: totalDeposits.toCurrencyWith(currency),
                       icon: Icons.savings_outlined,
                       color: theme.colorScheme.tertiary,
                     ),
@@ -71,7 +73,7 @@ class PaymentHistoryScreen extends ConsumerWidget {
                   Expanded(
                     child: _SummaryCard(
                       title: 'Total Rent',
-                      amount: totalRent.toCurrency(symbol: '$cs '),
+                      amount: totalRent.toCurrencyWith(currency),
                       icon: Icons.receipt_long_outlined,
                       color: theme.colorScheme.secondary,
                     ),
@@ -85,7 +87,7 @@ class PaymentHistoryScreen extends ConsumerWidget {
                 Text('Deposits (Caution)', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
                 ...deposits.map(
-                  (p) => _PaymentTile(payment: p, currencySymbol: cs),
+                  (p) => _PaymentTile(payment: p, currency: currency),
                 ),
                 const SizedBox(height: 20),
               ],
@@ -100,7 +102,7 @@ class PaymentHistoryScreen extends ConsumerWidget {
                 )
               else
                 ...rents.map(
-                  (p) => _PaymentTile(payment: p, currencySymbol: cs),
+                  (p) => _PaymentTile(payment: p, currency: currency),
                 ),
             ],
           );
@@ -151,10 +153,10 @@ class _SummaryCard extends StatelessWidget {
 }
 
 class _PaymentTile extends StatelessWidget {
-  const _PaymentTile({required this.payment, required this.currencySymbol});
+  const _PaymentTile({required this.payment, required this.currency});
 
   final Payment payment;
-  final String currencySymbol;
+  final Currency currency;
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +187,7 @@ class _PaymentTile extends StatelessWidget {
           style: theme.textTheme.bodySmall,
         ),
         trailing: Text(
-          payment.amount.toCurrency(symbol: '$currencySymbol '),
+          payment.amount.toCurrencyWith(currency),
           style: theme.textTheme.titleSmall?.copyWith(
             color: theme.colorScheme.secondary,
             fontWeight: FontWeight.bold,

@@ -748,4 +748,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get custom => 'Personnalisé';
+
+  @override
+  String get profile => 'Profil';
+
+  @override
+  String get preferences => 'Préférences';
+
+  @override
+  String get account => 'Compte';
+
+  @override
+  String get chooseCurrency => 'Choisir la devise';
+
+  @override
+  String get saved => 'Enregistré';
+
+  @override
+  String get memberSince => 'Membre depuis';
 }

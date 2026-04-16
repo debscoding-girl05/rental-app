@@ -27,6 +27,8 @@ import 'package:landlord_os/features/ai/presentation/profitability_screen.dart';
 import 'package:landlord_os/features/maintenance/presentation/maintenance_screen.dart';
 import 'package:landlord_os/features/maintenance/presentation/add_request_screen.dart';
 import 'package:landlord_os/features/maintenance/presentation/maintenance_detail_screen.dart';
+import 'package:landlord_os/features/settings/presentation/settings_screen.dart';
+import 'package:landlord_os/features/profile/presentation/profile_screen.dart';
 
 /// Root widget for LandlordOS.
 class LandlordOSApp extends ConsumerWidget {
@@ -151,6 +153,16 @@ final _router = GoRouter(
           ),
         ),
       ],
+    ),
+
+    // Settings & Profile (no bottom nav)
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfileScreen(),
     ),
 
     // Main app shell with bottom nav

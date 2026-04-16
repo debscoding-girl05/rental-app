@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/constants/currencies.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/features/financials/data/transaction_repository.dart';
 import 'package:landlord_os/features/financials/domain/financial_summary.dart';
 import 'package:landlord_os/features/financials/presentation/financials_controller.dart';
@@ -20,6 +22,7 @@ class FinancialsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final txAsync = ref.watch(financialsControllerProvider);
+    final currency = ref.watch(currencyProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Financials')),
@@ -50,7 +53,7 @@ class FinancialsScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             children: [
               // Summary cards
-              _SummaryCards(summary: summary),
+              _SummaryCards(summary: summary, currency: currency),
               const SizedBox(height: 24),
 
               // Income vs Expenses pie chart
@@ -111,7 +114,7 @@ class FinancialsScreen extends ConsumerWidget {
                           ? Text(tx.description!)
                           : null,
                       trailing: Text(
-                        '${tx.type == 'income' ? '+' : '-'}${tx.amount.toCurrency()}',
+                        '${tx.type == 'income' ? '+' : '-'}${tx.amount.toCurrencyWith(currency)}',
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: tx.type == 'income'
@@ -130,9 +133,10 @@ class FinancialsScreen extends ConsumerWidget {
 }
 
 class _SummaryCards extends StatelessWidget {
-  const _SummaryCards({required this.summary});
+  const _SummaryCards({required this.summary, required this.currency});
 
   final FinancialSummary summary;
+  final Currency currency;
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +147,7 @@ class _SummaryCards extends StatelessWidget {
             Expanded(
               child: StatCard(
                 label: context.l10n.totalIncome,
-                value: summary.totalIncome.toCurrency(),
+                value: summary.totalIncome.toCurrencyWith(currency),
                 icon: Icons.trending_up,
                 iconColor: AppColors.success,
               ),
@@ -152,7 +156,7 @@ class _SummaryCards extends StatelessWidget {
             Expanded(
               child: StatCard(
                 label: context.l10n.totalExpenses,
-                value: summary.totalExpenses.toCurrency(),
+                value: summary.totalExpenses.toCurrencyWith(currency),
                 icon: Icons.trending_down,
                 iconColor: AppColors.error,
               ),
@@ -165,7 +169,7 @@ class _SummaryCards extends StatelessWidget {
             Expanded(
               child: StatCard(
                 label: context.l10n.netProfit,
-                value: summary.netProfit.toCurrency(),
+                value: summary.netProfit.toCurrencyWith(currency),
                 icon: Icons.account_balance,
                 iconColor: summary.netProfit >= 0
                     ? AppColors.success

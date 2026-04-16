@@ -259,5 +259,12 @@
   "thisYear": "Cette année",
   "lastMonth": "Le mois dernier",
   "lastYear": "L'année dernière",
-  "custom": "Personnalisé"
+  "custom": "Personnalisé",
+
+  "profile": "Profil",
+  "preferences": "Préférences",
+  "account": "Compte",
+  "chooseCurrency": "Choisir la devise",
+  "saved": "Enregistré",
+  "memberSince": "Membre depuis"
 }

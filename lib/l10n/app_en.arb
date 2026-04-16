@@ -522,5 +522,18 @@
   "lastYear": "Last Year",
   "@lastYear": { "description": "Last year label" },
   "custom": "Custom",
-  "@custom": { "description": "Custom period label" }
+  "@custom": { "description": "Custom period label" },
+
+  "profile": "Profile",
+  "@profile": { "description": "Profile page title" },
+  "preferences": "Preferences",
+  "@preferences": { "description": "Preferences section header" },
+  "account": "Account",
+  "@account": { "description": "Account section header" },
+  "chooseCurrency": "Choose Currency",
+  "@chooseCurrency": { "description": "Currency picker title" },
+  "saved": "Saved",
+  "@saved": { "description": "Saved confirmation" },
+  "memberSince": "Member since",
+  "@memberSince": { "description": "Member since label" }
 }

@@ -51,6 +51,8 @@ class GroqService {
     int? bathrooms,
     double? sizeSqm,
     String? notes,
+    String? currencySymbol,
+    String? currencyCode,
   }) async {
     final userMessage = StringBuffer()
       ..writeln('Estimate monthly rent for:')
@@ -61,6 +63,12 @@ class GroqService {
       ..writeln('Size: ${sizeSqm != null ? "${sizeSqm}sqm" : "N/A"}');
     if (notes != null && notes.isNotEmpty) {
       userMessage.writeln('Additional info: $notes');
+    }
+    if (currencyCode != null || currencySymbol != null) {
+      userMessage.writeln(
+        'Currency: ${currencyCode ?? ''} (${currencySymbol ?? ''}). '
+        'Return all amounts in this currency.',
+      );
     }
 
     final raw = await _invoke(
@@ -82,13 +90,17 @@ class GroqService {
     required double mortgageMonthly,
     required double monthlyRent,
     required double monthlyExpenses,
+    String? currencySymbol,
+    String? currencyCode,
   }) async {
+    final cs = currencySymbol ?? '\$';
     final userMessage =
-        '''Analyze this rental property investment:
-- Purchase price: \$${purchasePrice.toStringAsFixed(2)}
-- Monthly mortgage: \$${mortgageMonthly.toStringAsFixed(2)}
-- Monthly rent income: \$${monthlyRent.toStringAsFixed(2)}
-- Monthly expenses (maintenance, insurance, tax): \$${monthlyExpenses.toStringAsFixed(2)}''';
+        '''Analyze this rental property investment (all amounts in ${currencyCode ?? 'USD'} ($cs)):
+- Purchase price: $cs${purchasePrice.toStringAsFixed(2)}
+- Monthly mortgage: $cs${mortgageMonthly.toStringAsFixed(2)}
+- Monthly rent income: $cs${monthlyRent.toStringAsFixed(2)}
+- Monthly expenses (maintenance, insurance, tax): $cs${monthlyExpenses.toStringAsFixed(2)}
+Return all monetary values in $cs.''';
 
     final raw = await _invoke(
       action: 'analyze_profitability',

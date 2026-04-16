@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/ai/domain/profitability_report.dart';
 import 'package:landlord_os/features/ai/presentation/ai_controller.dart';
@@ -54,6 +55,8 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
             mortgageMonthly: double.parse(_mortgageCtrl.text.trim()),
             monthlyRent: double.parse(_rentCtrl.text.trim()),
             monthlyExpenses: double.parse(_expensesCtrl.text.trim()),
+            currencySymbol: ref.read(currencyProvider).symbol,
+            currencyCode: ref.read(currencyProvider).code,
           );
       if (mounted) setState(() => _result = report);
     } catch (e) {
@@ -73,6 +76,7 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final currency = ref.watch(currencyProvider);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.profitabilityAnalysis)),
       body: SingleChildScrollView(
@@ -148,7 +152,9 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
                       ),
                       _MetricRow(
                         label: 'Monthly Cash Flow',
-                        value: _result!.monthlyCashFlow.toCurrency(),
+                        value: _result!.monthlyCashFlow.toCurrencyWith(
+                          currency,
+                        ),
                         valueColor: _result!.monthlyCashFlow >= 0
                             ? AppColors.success
                             : AppColors.error,

@@ -745,4 +745,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get custom => 'Custom';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get chooseCurrency => 'Choose Currency';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get memberSince => 'Member since';
 }

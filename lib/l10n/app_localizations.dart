@@ -1555,6 +1555,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Custom'**
   String get custom;
+
+  /// Profile page title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// Preferences section header
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// Account section header
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// Currency picker title
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Currency'**
+  String get chooseCurrency;
+
+  /// Saved confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// Member since label
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get memberSince;
 }
 
 class _AppLocalizationsDelegate

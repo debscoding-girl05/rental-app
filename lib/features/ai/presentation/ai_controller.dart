@@ -28,14 +28,20 @@ class AiController extends _$AiController {
     int? bathrooms,
     double? sizeSqm,
     String? notes,
+    String? currencySymbol,
+    String? currencyCode,
   }) async {
-    return ref.read(groqServiceProvider).predictRentPrice(
+    return ref
+        .read(groqServiceProvider)
+        .predictRentPrice(
           city: city,
           country: country,
           bedrooms: bedrooms,
           bathrooms: bathrooms,
           sizeSqm: sizeSqm,
           notes: notes,
+          currencySymbol: currencySymbol,
+          currencyCode: currencyCode,
         );
   }
 
@@ -45,12 +51,18 @@ class AiController extends _$AiController {
     required double mortgageMonthly,
     required double monthlyRent,
     required double monthlyExpenses,
+    String? currencySymbol,
+    String? currencyCode,
   }) async {
-    return ref.read(groqServiceProvider).analyzeProfitability(
+    return ref
+        .read(groqServiceProvider)
+        .analyzeProfitability(
           purchasePrice: purchasePrice,
           mortgageMonthly: mortgageMonthly,
           monthlyRent: monthlyRent,
           monthlyExpenses: monthlyExpenses,
+          currencySymbol: currencySymbol,
+          currencyCode: currencyCode,
         );
   }
 }

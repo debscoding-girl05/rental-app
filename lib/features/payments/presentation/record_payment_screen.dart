@@ -7,6 +7,8 @@ import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
+import 'package:landlord_os/core/constants/currencies.dart';
 import 'package:landlord_os/features/payments/domain/payment_model.dart';
 import 'package:landlord_os/features/payments/presentation/payment_controller.dart';
 import 'package:landlord_os/features/tenants/domain/tenant_model.dart';
@@ -101,7 +103,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
       unitId: widget.tenant.unitId,
       type: _type,
       amount: amount,
-      currency: 'XOF',
+      currency: ref.read(currencyProvider).code,
       date: _date,
       periodLabel: _type == 'rent' ? _periodLabel() : null,
       paymentMethod: _paymentMethod,
@@ -114,7 +116,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '${PaymentTypes.label(_type)} recorded: ${amount.toCurrency(symbol: '${widget.currencySymbol} ')}',
+              '${PaymentTypes.label(_type)} recorded: ${amount.toCurrencyWith(ref.read(currencyProvider))}',
             ),
             backgroundColor: AppColors.success,
           ),
@@ -138,7 +140,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cs = widget.currencySymbol;
+    final currency = ref.watch(currencyProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Record Payment')),
@@ -168,7 +170,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
                           style: theme.textTheme.titleMedium,
                         ),
                         Text(
-                          'Rent: $cs ${widget.tenant.rentAmount.toCurrency(symbol: '')}',
+                          'Rent: ${widget.tenant.rentAmount.toCurrencyWith(currency)}',
                           style: theme.textTheme.bodySmall,
                         ),
                       ],
@@ -203,7 +205,7 @@ class _RecordPaymentScreenState extends ConsumerState<RecordPaymentScreen> {
             style: theme.textTheme.headlineMedium,
             decoration: InputDecoration(
               labelText: context.l10n.amount,
-              prefixText: '$cs ',
+              prefixText: '${currency.symbol} ',
               border: const OutlineInputBorder(),
             ),
           ),

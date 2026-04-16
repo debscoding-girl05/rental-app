@@ -17,6 +17,7 @@ import 'package:landlord_os/features/properties/presentation/property_controller
 import 'package:landlord_os/features/tenants/presentation/tenant_controller.dart';
 import 'package:landlord_os/features/maintenance/presentation/maintenance_controller.dart';
 import 'package:landlord_os/core/providers/locale_provider.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/shared/widgets/stat_card.dart';
 
 /// Main dashboard showing portfolio overview metrics.
@@ -26,6 +27,7 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final currency = ref.watch(currencyProvider);
     final propertiesAsync = ref.watch(propertyControllerProvider);
     final tenantsAsync = ref.watch(tenantControllerProvider);
     final txAsync = ref.watch(financialsControllerProvider);
@@ -50,7 +52,10 @@ class DashboardScreen extends ConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(context.l10n.helloUser(displayName), style: theme.textTheme.titleMedium),
+            Text(
+              context.l10n.helloUser(displayName),
+              style: theme.textTheme.titleMedium,
+            ),
             Text(
               DateTime.now().formatted,
               style: theme.textTheme.bodySmall?.copyWith(
@@ -75,31 +80,9 @@ class DashboardScreen extends ConsumerWidget {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.logout_outlined),
-            tooltip: context.l10n.signOut,
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(context.l10n.signOut),
-                  content: Text(context.l10n.areYouSure),
-                  actions: [
-                    TextButton(
-                      onPressed: () => ctx.pop(false),
-                      child: Text(context.l10n.cancel),
-                    ),
-                    TextButton(
-                      onPressed: () => ctx.pop(true),
-                      child: Text(context.l10n.signOut),
-                    ),
-                  ],
-                ),
-              );
-              if (confirm == true) {
-                await Supabase.instance.client.auth.signOut();
-                if (context.mounted) context.go('/login');
-              }
-            },
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: context.l10n.settings,
+            onPressed: () => context.push('/settings'),
           ),
         ],
       ),
@@ -115,7 +98,10 @@ class DashboardScreen extends ConsumerWidget {
           const SizedBox(height: 24),
 
           // --- Financial Summary ---
-          Text(context.l10n.financialOverview, style: theme.textTheme.titleMedium),
+          Text(
+            context.l10n.financialOverview,
+            style: theme.textTheme.titleMedium,
+          ),
           const SizedBox(height: 12),
           txAsync.when(
             loading: () => const SizedBox(
@@ -152,7 +138,7 @@ class DashboardScreen extends ConsumerWidget {
                       Expanded(
                         child: StatCard(
                           label: context.l10n.income,
-                          value: summary.totalIncome.toCurrency(),
+                          value: summary.totalIncome.toCurrencyWith(currency),
                           icon: Icons.trending_up,
                           iconColor: AppColors.success,
                         ),
@@ -161,7 +147,7 @@ class DashboardScreen extends ConsumerWidget {
                       Expanded(
                         child: StatCard(
                           label: context.l10n.totalExpenses,
-                          value: summary.totalExpenses.toCurrency(),
+                          value: summary.totalExpenses.toCurrencyWith(currency),
                           icon: Icons.trending_down,
                           iconColor: AppColors.error,
                         ),
@@ -174,7 +160,7 @@ class DashboardScreen extends ConsumerWidget {
                       Expanded(
                         child: StatCard(
                           label: context.l10n.netProfit,
-                          value: summary.netProfit.toCurrency(),
+                          value: summary.netProfit.toCurrencyWith(currency),
                           icon: Icons.account_balance,
                           iconColor: summary.netProfit >= 0
                               ? AppColors.success
@@ -212,7 +198,10 @@ class DashboardScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(context.l10n.recentPayments, style: theme.textTheme.titleMedium),
+              Text(
+                context.l10n.recentPayments,
+                style: theme.textTheme.titleMedium,
+              ),
               TextButton(
                 onPressed: () => context.go('/financials'),
                 child: Text(context.l10n.viewAll),
@@ -283,7 +272,7 @@ class DashboardScreen extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            p.amount.toCurrency(symbol: 'FCFA '),
+                            p.amount.toCurrencyWith(currency),
                             style: theme.textTheme.titleSmall?.copyWith(
                               color: theme.colorScheme.secondary,
                             ),
@@ -302,7 +291,10 @@ class DashboardScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(context.l10n.maintenance, style: theme.textTheme.titleMedium),
+              Text(
+                context.l10n.maintenance,
+                style: theme.textTheme.titleMedium,
+              ),
               TextButton(
                 onPressed: () => context.push('/maintenance'),
                 child: Text(context.l10n.viewAll),
@@ -317,10 +309,12 @@ class DashboardScreen extends ConsumerWidget {
             ),
             error: (_, __) => const SizedBox.shrink(),
             data: (requests) {
-              final openCount =
-                  requests.where((r) => r.status == 'open').length;
-              final urgentCount =
-                  requests.where((r) => r.priority == 'urgent').length;
+              final openCount = requests
+                  .where((r) => r.status == 'open')
+                  .length;
+              final urgentCount = requests
+                  .where((r) => r.priority == 'urgent')
+                  .length;
               return Row(
                 children: [
                   Expanded(

@@ -233,7 +233,6 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
     final theme = Theme.of(context);
     final unitsAsync = ref.watch(unitControllerProvider(property.id));
     final currency = Currencies.fromCode(property.currency);
-    final cs = currency.symbol;
 
     return Scaffold(
       appBar: AppBar(
@@ -502,16 +501,16 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                             _DetailRow(
                               icon: Icons.account_balance_outlined,
                               label: context.l10n.purchasePrice,
-                              value: property.purchasePrice!.toCurrency(
-                                symbol: '$cs ',
+                              value: property.purchasePrice!.toCurrencyWith(
+                                currency,
                               ),
                             ),
                           if (property.mortgageMonthly != null)
                             _DetailRow(
                               icon: Icons.credit_card_outlined,
                               label: context.l10n.mortgage,
-                              value: property.mortgageMonthly!.toCurrency(
-                                symbol: '$cs ',
+                              value: property.mortgageMonthly!.toCurrencyWith(
+                                currency,
                               ),
                             ),
                         ],
@@ -570,7 +569,8 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                   data: (units) {
                     if (units.isEmpty) {
                       return EmptyStateWidget(
-                        message: '${context.l10n.noUnits}\n${context.l10n.addYourFirstUnit}',
+                        message:
+                            '${context.l10n.noUnits}\n${context.l10n.addYourFirstUnit}',
                         icon: Icons.door_front_door_outlined,
                         actionLabel: context.l10n.addUnit,
                         onAction: () => context.push(
@@ -583,21 +583,20 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
                           .map(
                             (unit) => _UnitTile(
                               unit: unit,
-                              currencySymbol: cs,
+                              currency: currency,
                               tenant: _tenantForUnit(unit.id),
                               onUploadPhoto: () => _uploadUnitPhoto(unit),
                               onEdit: () async {
-                                final result =
-                                    await Navigator.push<bool>(
+                                final result = await Navigator.push<bool>(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        EditUnitScreen(unit: unit),
+                                    builder: (_) => EditUnitScreen(unit: unit),
                                   ),
                                 );
                                 if (result == true) {
-                                  ref.invalidate(unitControllerProvider(
-                                      property.id));
+                                  ref.invalidate(
+                                    unitControllerProvider(property.id),
+                                  );
                                 }
                               },
                             ),
@@ -691,14 +690,14 @@ class _DetailRow extends StatelessWidget {
 class _UnitTile extends StatelessWidget {
   const _UnitTile({
     required this.unit,
-    required this.currencySymbol,
+    required this.currency,
     required this.onUploadPhoto,
     required this.onEdit,
     this.tenant,
   });
 
   final Unit unit;
-  final String currencySymbol;
+  final Currency currency;
   final VoidCallback onUploadPhoto;
   final VoidCallback onEdit;
   final Tenant? tenant;
@@ -728,8 +727,7 @@ class _UnitTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     image: unit.photoUrl != null
                         ? DecorationImage(
-                            image:
-                                CachedNetworkImageProvider(unit.photoUrl!),
+                            image: CachedNetworkImageProvider(unit.photoUrl!),
                             fit: BoxFit.cover,
                           )
                         : null,
@@ -759,16 +757,20 @@ class _UnitTile extends StatelessWidget {
                     Text(
                       '${UnitTypes.label(unit.unitType)} - Floor ${unit.floorNumber}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface
-                            .withValues(alpha: 0.6),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                     if (tenant != null) ...[
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.person, size: 14,
-                              color: theme.colorScheme.secondary),
+                          Icon(
+                            Icons.person,
+                            size: 14,
+                            color: theme.colorScheme.secondary,
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -789,7 +791,7 @@ class _UnitTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    unit.rentAmount.toCurrency(symbol: '$currencySymbol '),
+                    unit.rentAmount.toCurrencyWith(currency),
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: theme.colorScheme.secondary,
                     ),
@@ -803,17 +805,19 @@ class _UnitTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: unit.isOccupied
                           ? AppColors.success.withValues(alpha: 0.1)
-                          : theme.colorScheme.onSurface
-                              .withValues(alpha: 0.05),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      unit.isOccupied ? context.l10n.occupied : context.l10n.vacant,
+                      unit.isOccupied
+                          ? context.l10n.occupied
+                          : context.l10n.vacant,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: unit.isOccupied
                             ? AppColors.success
-                            : theme.colorScheme.onSurface
-                                .withValues(alpha: 0.4),
+                            : theme.colorScheme.onSurface.withValues(
+                                alpha: 0.4,
+                              ),
                       ),
                     ),
                   ),

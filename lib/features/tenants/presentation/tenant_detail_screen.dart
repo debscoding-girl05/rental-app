@@ -8,9 +8,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:landlord_os/core/constants/app_colors.dart';
+import 'package:landlord_os/core/constants/currencies.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/features/payments/domain/payment_model.dart';
 import 'package:landlord_os/features/payments/presentation/payment_controller.dart';
 import 'package:landlord_os/features/payments/presentation/payment_history_screen.dart';
@@ -183,7 +185,8 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
 
     // Determine property ID from unit
     final propertyId = _unit?.propertyId ?? '';
-    final currencySymbol = 'FCFA'; // default, could derive from property
+    final currency = ref.watch(currencyProvider);
+    final currencySymbol = currency.symbol;
 
     return Scaffold(
       appBar: AppBar(
@@ -350,16 +353,14 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                         _DetailRow(
                           icon: Icons.attach_money,
                           label: context.l10n.rentAmount,
-                          value: tenant.rentAmount.toCurrency(
-                            symbol: '$currencySymbol ',
-                          ),
+                          value: tenant.rentAmount.toCurrencyWith(currency),
                         ),
                         if (tenant.depositAmount != null)
                           _DetailRow(
                             icon: Icons.savings_outlined,
                             label: context.l10n.deposit,
-                            value: tenant.depositAmount!.toCurrency(
-                              symbol: '$currencySymbol ',
+                            value: tenant.depositAmount!.toCurrencyWith(
+                              currency,
                             ),
                           ),
                         _DetailRow(
@@ -440,7 +441,7 @@ class _TenantDetailBodyState extends ConsumerState<_TenantDetailBody> {
                           .map(
                             (p) => _RecentPaymentTile(
                               payment: p,
-                              currencySymbol: currencySymbol,
+                              currency: currency,
                             ),
                           )
                           .toList(),
@@ -766,13 +767,10 @@ class _DocumentCard extends StatelessWidget {
 }
 
 class _RecentPaymentTile extends StatelessWidget {
-  const _RecentPaymentTile({
-    required this.payment,
-    required this.currencySymbol,
-  });
+  const _RecentPaymentTile({required this.payment, required this.currency});
 
   final Payment payment;
-  final String currencySymbol;
+  final Currency currency;
 
   @override
   Widget build(BuildContext context) {
@@ -809,7 +807,7 @@ class _RecentPaymentTile extends StatelessWidget {
               ),
             ),
             Text(
-              payment.amount.toCurrency(symbol: '$currencySymbol '),
+              payment.amount.toCurrencyWith(currency),
               style: theme.textTheme.titleSmall?.copyWith(
                 color: theme.colorScheme.secondary,
               ),

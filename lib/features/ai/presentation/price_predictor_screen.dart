@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/core/utils/validators.dart';
 import 'package:landlord_os/features/ai/domain/price_prediction.dart';
 import 'package:landlord_os/features/ai/presentation/ai_controller.dart';
@@ -62,6 +63,8 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
             notes: _notesCtrl.text.trim().isNotEmpty
                 ? _notesCtrl.text.trim()
                 : null,
+            currencySymbol: ref.read(currencyProvider).symbol,
+            currencyCode: ref.read(currencyProvider).code,
           );
       if (mounted) setState(() => _result = prediction);
     } catch (e) {
@@ -81,6 +84,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final currency = ref.watch(currencyProvider);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.pricePredictor)),
       body: SingleChildScrollView(
@@ -170,7 +174,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            _result!.suggestedMin.toCurrency(),
+                            _result!.suggestedMin.toCurrencyWith(currency),
                             style: theme.textTheme.headlineMedium?.copyWith(
                               color: theme.colorScheme.secondary,
                               fontWeight: FontWeight.w700,
@@ -178,7 +182,7 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                           ),
                           Text('  —  ', style: theme.textTheme.headlineMedium),
                           Text(
-                            _result!.suggestedMax.toCurrency(),
+                            _result!.suggestedMax.toCurrencyWith(currency),
                             style: theme.textTheme.headlineMedium?.copyWith(
                               color: theme.colorScheme.secondary,
                               fontWeight: FontWeight.w700,

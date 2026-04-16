@@ -6,6 +6,7 @@ import 'package:landlord_os/core/constants/app_colors.dart';
 import 'package:landlord_os/core/extensions/datetime_ext.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/features/maintenance/domain/maintenance_request_model.dart';
 import 'package:landlord_os/features/maintenance/presentation/maintenance_controller.dart';
 import 'package:landlord_os/shared/widgets/app_button.dart';
@@ -283,7 +284,9 @@ class _DetailBodyState extends ConsumerState<_DetailBody> {
                     _DetailRow(
                       icon: Icons.attach_money,
                       label: context.l10n.cost,
-                      value: req.cost!.toCurrency(),
+                      value: req.cost!.toCurrencyWith(
+                        ref.watch(currencyProvider),
+                      ),
                     ),
                   if (req.createdAt != null)
                     _DetailRow(

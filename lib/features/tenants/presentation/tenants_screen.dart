@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 import 'package:landlord_os/core/extensions/num_ext.dart';
+import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/features/tenants/presentation/tenant_controller.dart';
 import 'package:landlord_os/shared/widgets/app_card.dart';
 import 'package:landlord_os/shared/widgets/empty_state_widget.dart';
@@ -17,6 +18,7 @@ class TenantsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tenantsAsync = ref.watch(tenantControllerProvider);
     final theme = Theme.of(context);
+    final currency = ref.watch(currencyProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.tenants)),
@@ -83,7 +85,7 @@ class TenantsScreen extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      tenant.rentAmount.toCurrency(),
+                      tenant.rentAmount.toCurrencyWith(currency),
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.secondary,
                       ),
