@@ -22,6 +22,7 @@ class PropertiesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.properties)),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'fab_properties',
         onPressed: () => context.push('/properties/add'),
         child: const Icon(Icons.add),
       ),

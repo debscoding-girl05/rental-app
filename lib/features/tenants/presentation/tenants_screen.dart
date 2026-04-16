@@ -23,6 +23,7 @@ class TenantsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.tenants)),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'fab_tenants',
         onPressed: () => context.push('/tenants/add'),
         child: const Icon(Icons.person_add),
       ),

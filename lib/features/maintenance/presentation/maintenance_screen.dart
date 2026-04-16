@@ -29,6 +29,7 @@ class _MaintenanceScreenState extends ConsumerState<MaintenanceScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.maintenance)),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'fab_maintenance',
         onPressed: () => context.push('/maintenance/add'),
         child: const Icon(Icons.add),
       ),

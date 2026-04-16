@@ -135,7 +135,7 @@ class _ProfitabilityScreenState extends ConsumerState<ProfitabilityScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'Analysis Results',
@@ -210,11 +210,16 @@ class _MetricRow extends StatelessWidget {
               ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: valueColor,
-              fontWeight: FontWeight.w600,
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: valueColor,
+                fontWeight: FontWeight.w600,
+              ),
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
             ),
           ),
         ],

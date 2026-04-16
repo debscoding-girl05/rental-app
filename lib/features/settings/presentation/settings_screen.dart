@@ -8,14 +8,36 @@ import 'package:landlord_os/core/providers/currency_provider.dart';
 import 'package:landlord_os/core/providers/locale_provider.dart';
 import 'package:landlord_os/core/extensions/l10n_ext.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = Supabase.instance.client.auth.currentUser;
+  }
+
+  Future<void> _refreshUser() async {
+    await Supabase.instance.client.auth.refreshSession();
+    setState(() {
+      _user = Supabase.instance.client.auth.currentUser;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final currency = ref.watch(currencyProvider);
     final locale = ref.watch(localeProvider);
+    final avatarUrl = _user?.userMetadata?['avatar_url'] as String?;
+    final fullName = _user?.userMetadata?['full_name'] as String?;
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settings)),
@@ -23,22 +45,18 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           // --- Profile Section ---
           ListTile(
-            leading: const CircleAvatar(child: Icon(Icons.person)),
-            title: Text(
-              Supabase
-                          .instance
-                          .client
-                          .auth
-                          .currentUser
-                          ?.userMetadata?['full_name']
-                      as String? ??
-                  context.l10n.profile,
+            leading: CircleAvatar(
+              backgroundImage:
+                  avatarUrl != null ? NetworkImage(avatarUrl) : null,
+              child: avatarUrl == null ? const Icon(Icons.person) : null,
             ),
-            subtitle: Text(
-              Supabase.instance.client.auth.currentUser?.email ?? '',
-            ),
+            title: Text(fullName ?? context.l10n.profile),
+            subtitle: Text(_user?.email ?? ''),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/profile'),
+            onTap: () async {
+              await context.push('/profile');
+              _refreshUser();
+            },
           ),
           const Divider(),
 
@@ -56,7 +74,7 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.monetization_on_outlined),
             title: Text(context.l10n.currency),
             subtitle: Text('${currency.symbol} — ${currency.name}'),
-            onTap: () => _showCurrencyPicker(context, ref),
+            onTap: () => _showCurrencyPicker(context),
           ),
 
           // --- Language ---
@@ -117,7 +135,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showCurrencyPicker(BuildContext context, WidgetRef ref) {
+  void _showCurrencyPicker(BuildContext context) {
     final current = ref.read(currencyProvider);
     showModalBottomSheet(
       context: context,

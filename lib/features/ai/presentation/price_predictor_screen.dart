@@ -163,29 +163,43 @@ class _PricePredictorScreenState extends ConsumerState<PricePredictorScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         context.l10n.estimatedPrice,
                         style: theme.textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          Text(
-                            _result!.suggestedMin.toCurrencyWith(currency),
-                            style: theme.textTheme.headlineMedium?.copyWith(
-                              color: theme.colorScheme.secondary,
-                              fontWeight: FontWeight.w700,
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              _result!.suggestedMin.toCurrencyWith(currency),
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
-                          Text('  —  ', style: theme.textTheme.headlineMedium),
-                          Text(
-                            _result!.suggestedMax.toCurrencyWith(currency),
-                            style: theme.textTheme.headlineMedium?.copyWith(
-                              color: theme.colorScheme.secondary,
-                              fontWeight: FontWeight.w700,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              '—',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.4),
+                              ),
+                            ),
+                          ),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              _result!.suggestedMax.toCurrencyWith(currency),
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: theme.colorScheme.secondary,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ],

@@ -274,6 +274,7 @@ class _PropertyDetailBodyState extends ConsumerState<_PropertyDetailBody> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_property_detail',
         onPressed: () => context.push('/properties/${property.id}/units/add'),
         icon: const Icon(Icons.add),
         label: Text(context.l10n.addUnit),

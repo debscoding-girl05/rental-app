@@ -27,6 +27,7 @@ class FinancialsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Financials')),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'fab_financials',
         onPressed: () => context.push('/financials/add'),
         child: const Icon(Icons.add),
       ),
